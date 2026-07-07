@@ -1,0 +1,3359 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Life Chapters™ — Human Mirror™</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@300;400&display=swap');
+
+/* ─── TOKENS ─── */
+:root {
+  --navy:     #0c1620;
+  --navy2:    #111e2e;
+  --navy3:    #182535;
+  --sage:     #6b8f71;
+  --sage-l:   #e8f0e9;
+  --sage-d:   rgba(107,143,113,0.18);
+  --gold:     #c9a96e;
+  --gold-l:   rgba(201,169,110,0.14);
+  --warm:     #f7f4ef;
+  --warm2:    #f0ece4;
+  --ink:      #1a1a1a;
+  --ink2:     #3d3d3d;
+  --ink3:     rgba(26,26,26,0.45);
+  --border:   rgba(26,26,26,0.09);
+  --border2:  rgba(26,26,26,0.16);
+  --serif:    'Cormorant Garamond', Georgia, serif;
+  --sans:     'DM Sans', sans-serif;
+  --mono:     'JetBrains Mono', monospace;
+  --ease:     cubic-bezier(0.16, 1, 0.3, 1);
+  --ease2:    cubic-bezier(0.4, 0, 0.2, 1);
+  --r:        14px;
+  --r-lg:     22px;
+  --sh:       0 2px 12px rgba(12,22,32,0.08), 0 1px 3px rgba(12,22,32,0.06);
+  --sh-lg:    0 8px 40px rgba(12,22,32,0.12), 0 2px 8px rgba(12,22,32,0.08);
+}
+
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--sans);
+  background: var(--warm);
+  color: var(--ink);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+textarea, input { font-family: inherit; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ─── GRAIN OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+/* ─── LAYOUT ─── */
+#app { position: relative; z-index: 1; min-height: 100dvh; display: flex; flex-direction: column; }
+
+/* PROGRESS BAR */
+#prog-wrap {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 2px; background: rgba(26,26,26,0.08);
+}
+#prog-bar {
+  height: 100%; background: linear-gradient(90deg, var(--sage), var(--gold));
+  transition: width 0.6s var(--ease);
+  box-shadow: 0 0 8px rgba(107,143,113,0.4);
+}
+
+/* NAV */
+#topnav {
+  position: fixed; top: 2px; left: 0; right: 0; z-index: 99;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem 0.75rem;
+  background: rgba(247,244,239,0.92); backdrop-filter: blur(16px);
+}
+.nav-brand {
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--ink3);
+}
+.nav-brand strong { color: var(--sage); font-weight: 400; }
+#nav-step-ind {
+  font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.15em;
+  color: var(--ink3);
+}
+#nav-back-btn {
+  background: none; border: 1px solid var(--border2); border-radius: 8px;
+  padding: 5px 12px; font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.08em; color: var(--ink2); transition: all 0.2s;
+  display: none;
+}
+#nav-back-btn:hover { background: var(--border); }
+
+/* ─── SCREENS ─── */
+.screen {
+  display: none; flex-direction: column;
+  min-height: 100dvh; padding-top: 58px;
+  animation: fadeSlide 0.5s var(--ease) both;
+}
+.screen.active { display: flex; }
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── SCREEN: WELCOME ─── */
+#s-welcome {
+  align-items: center; justify-content: center;
+  padding: 4rem 1.5rem 3rem; text-align: center;
+  background: var(--warm);
+}
+.welcome-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--sage);
+  border: 1px solid rgba(107,143,113,0.3); border-radius: 100px;
+  padding: 6px 16px; margin-bottom: 2.5rem;
+  background: rgba(107,143,113,0.06);
+}
+.welcome-badge::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--sage); animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.welcome-h1 {
+  font-family: var(--serif); font-size: clamp(2.6rem, 8vw, 5rem);
+  font-weight: 400; line-height: 1.08; letter-spacing: -0.02em;
+  color: var(--ink); margin-bottom: 0.4rem;
+}
+.welcome-h1 em { font-style: italic; color: var(--sage); }
+.welcome-sub {
+  font-size: 1rem; color: var(--ink3); line-height: 1.7;
+  max-width: 380px; margin: 0 auto 1.5rem; font-weight: 300;
+}
+.welcome-quote {
+  font-family: var(--serif); font-style: italic;
+  font-size: 1.05rem; color: rgba(26,26,26,0.5); line-height: 1.7;
+  max-width: 360px; margin: 0 auto 3rem;
+  padding: 1.2rem 1.5rem; border-left: 2px solid var(--sage-l);
+}
+.welcome-meta {
+  display: flex; gap: 2rem; justify-content: center;
+  font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.12em;
+  color: var(--ink3); margin-bottom: 2.5rem; text-transform: uppercase;
+}
+.welcome-meta span { display: flex; align-items: center; gap: 5px; }
+
+/* RESUME BANNER */
+#resume-banner {
+  background: var(--navy2); border-radius: var(--r);
+  padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+  max-width: 380px; width: 100%;
+  display: none; flex-direction: column; gap: 0.6rem;
+  border: 1px solid rgba(107,143,113,0.2);
+}
+#resume-banner p { font-size: 0.8rem; color: rgba(255,255,255,0.65); }
+#resume-banner strong { color: var(--sage); font-weight: 500; }
+.resume-btns { display: flex; gap: 8px; }
+
+/* ─── BUTTONS ─── */
+.btn-primary {
+  background: var(--navy); color: var(--warm);
+  border: none; border-radius: var(--r);
+  padding: 14px 32px; font-size: 0.9rem; font-weight: 500;
+  letter-spacing: 0.01em; transition: all 0.25s var(--ease);
+  box-shadow: 0 4px 16px rgba(12,22,32,0.2);
+  position: relative; overflow: hidden;
+}
+.btn-primary::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent);
+  opacity: 0; transition: opacity 0.2s;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(12,22,32,0.25); }
+.btn-primary:hover::before { opacity: 1; }
+.btn-primary:active { transform: translateY(0); }
+.btn-sage {
+  background: var(--sage); color: white; border: none; border-radius: var(--r);
+  padding: 13px 28px; font-size: 0.85rem; font-weight: 500;
+  transition: all 0.25s; box-shadow: 0 3px 12px rgba(107,143,113,0.3);
+}
+.btn-sage:hover { background: #5a7d60; transform: translateY(-1px); }
+.btn-outline {
+  background: transparent; border: 1px solid var(--border2);
+  border-radius: var(--r); padding: 13px 22px; font-size: 0.82rem;
+  color: var(--ink2); transition: all 0.2s;
+}
+.btn-outline:hover { background: var(--border); }
+.btn-ghost {
+  background: transparent; border: none; color: var(--ink3);
+  font-size: 0.8rem; padding: 8px 12px;
+  border-radius: 8px; transition: all 0.2s;
+}
+.btn-ghost:hover { background: var(--border); color: var(--ink2); }
+.btn-sm {
+  background: var(--navy); color: var(--warm); border: none;
+  border-radius: 10px; padding: 10px 20px; font-size: 0.78rem;
+  font-weight: 500; transition: all 0.2s;
+}
+.btn-sm:hover { background: var(--navy3); }
+.btn-sm-outline {
+  background: transparent; border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px; padding: 9px 18px; font-size: 0.75rem;
+  color: rgba(255,255,255,0.65); transition: all 0.2s;
+}
+.btn-sm-outline:hover { border-color: rgba(255,255,255,0.4); color: white; }
+
+/* ─── SCREEN: CHAPTERS SELECT ─── */
+#s-select { padding: 1rem 1.25rem 5rem; }
+.screen-header { padding: 1.5rem 0 1.25rem; }
+.screen-label {
+  font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--sage); margin-bottom: 0.6rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.screen-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border2), transparent);
+}
+.screen-h { font-family: var(--serif); font-size: 1.8rem; font-weight: 400; line-height: 1.2; margin-bottom: 0.4rem; }
+.screen-h em { font-style: italic; color: var(--sage); }
+.screen-d { font-size: 0.85rem; color: var(--ink3); line-height: 1.65; }
+
+/* Selection counter */
+.sel-counter {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--warm2); border-radius: 10px; padding: 10px 14px;
+  margin-bottom: 1.2rem; border: 1px solid var(--border);
+}
+.sel-count-text { font-family: var(--mono); font-size: 0.62rem; color: var(--ink2); letter-spacing: 0.05em; }
+.sel-count-num { font-weight: 500; color: var(--sage); }
+.sel-range { font-size: 0.7rem; color: var(--ink3); }
+
+/* Chapters grid */
+.chapters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.ch-card {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: var(--r); padding: 1rem 0.9rem;
+  cursor: pointer; transition: all 0.22s var(--ease);
+  position: relative; overflow: hidden; user-select: none;
+  box-shadow: var(--sh);
+}
+.ch-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--sage-d); opacity: 0; transition: opacity 0.2s;
+}
+.ch-card:hover { border-color: var(--sage); transform: translateY(-2px); box-shadow: var(--sh-lg); }
+.ch-card.selected { border-color: var(--sage); background: rgba(107,143,113,0.06); }
+.ch-card.selected::before { opacity: 1; }
+.ch-card.selected .ch-check { opacity: 1; transform: scale(1); }
+.ch-check {
+  position: absolute; top: 8px; right: 8px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--sage); display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; color: white; opacity: 0; transform: scale(0.5);
+  transition: all 0.22s var(--ease);
+}
+.ch-emoji { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+.ch-name { font-size: 0.82rem; font-weight: 500; color: var(--ink); line-height: 1.3; }
+.ch-edit-row { display: flex; gap: 4px; margin-top: 6px; opacity: 0; transition: opacity 0.2s; }
+.ch-card.selected .ch-edit-row { opacity: 1; }
+.ch-edit-btn {
+  background: rgba(107,143,113,0.1); border: 1px solid rgba(107,143,113,0.2);
+  border-radius: 6px; padding: 2px 7px; font-size: 0.55rem;
+  font-family: var(--mono); color: var(--sage); cursor: pointer;
+  transition: all 0.15s; letter-spacing: 0.05em;
+}
+.ch-edit-btn:hover { background: rgba(107,143,113,0.2); }
+
+/* Custom chapter btn */
+.ch-add-btn {
+  background: transparent; border: 1.5px dashed var(--border2);
+  border-radius: var(--r); padding: 1rem 0.9rem;
+  cursor: pointer; transition: all 0.2s; text-align: left;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.8rem; color: var(--ink3); min-height: 90px;
+  justify-content: center; flex-direction: column;
+}
+.ch-add-btn:hover { border-color: var(--sage); color: var(--sage); background: var(--sage-d); }
+.ch-add-icon { font-size: 1.2rem; }
+
+/* ─── FLOATING ACTION ─── */
+.fab-wrap {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  padding: 1rem 1.25rem 1.5rem;
+  background: linear-gradient(to top, var(--warm) 70%, transparent);
+}
+.fab-wrap .btn-primary { width: 100%; font-size: 0.95rem; padding: 16px; }
+.fab-hint { text-align: center; font-family: var(--mono); font-size: 0.55rem; color: var(--ink3); letter-spacing: 0.08em; margin-top: 6px; }
+
+/* ─── CHAPTER DEEP DIVE ─── */
+#s-dive { padding: 1rem 1.25rem 5rem; }
+.dive-ch-header {
+  background: var(--navy); border-radius: var(--r-lg); padding: 1.5rem;
+  margin-bottom: 1.5rem; position: relative; overflow: hidden;
+}
+.dive-ch-header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 80% 20%, rgba(107,143,113,0.2), transparent 60%);
+}
+.dive-emoji { font-size: 2.2rem; margin-bottom: 0.5rem; display: block; }
+.dive-ch-label { font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.3rem; }
+.dive-ch-name { font-family: var(--serif); font-size: 1.8rem; font-weight: 400; color: white; line-height: 1.2; }
+.dive-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 1.2rem; position: relative; z-index: 1;
+}
+.dive-nav-dots { display: flex; gap: 5px; }
+.dive-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); transition: all 0.2s; }
+.dive-dot.act { background: var(--sage); width: 18px; border-radius: 3px; }
+
+/* Sliders */
+.slider-block { margin-bottom: 1.6rem; }
+.sl-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+.sl-label { font-size: 0.88rem; font-weight: 500; color: var(--ink); }
+.sl-value-display {
+  font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.05em;
+  color: var(--sage); background: var(--sage-d); border: 1px solid rgba(107,143,113,0.2);
+  border-radius: 6px; padding: 2px 8px; min-width: 32px; text-align: center;
+}
+.sl-desc { font-size: 0.75rem; color: var(--ink3); margin-bottom: 0.7rem; line-height: 1.5; }
+.slider-custom { position: relative; }
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px; border-radius: 100px;
+  background: linear-gradient(90deg, var(--sage) calc(var(--val, 50%)), var(--border2) calc(var(--val, 50%)));
+  outline: none; cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: white; border: 2px solid var(--sage);
+  box-shadow: 0 2px 8px rgba(107,143,113,0.3), 0 0 0 3px rgba(107,143,113,0.1);
+  cursor: pointer; transition: box-shadow 0.2s;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  box-shadow: 0 2px 12px rgba(107,143,113,0.4), 0 0 0 5px rgba(107,143,113,0.12);
+}
+
+/* Gap display */
+.gap-display {
+  background: white; border-radius: var(--r-lg); padding: 1.4rem;
+  margin: 1.2rem 0; border: 1px solid var(--border);
+  box-shadow: var(--sh);
+}
+.gap-row { display: flex; gap: 8px; align-items: stretch; }
+.gap-box { flex: 1; text-align: center; padding: 0.9rem 0.5rem; border-radius: 10px; }
+.gap-box.pres { background: rgba(26,74,122,0.06); border: 1px solid rgba(26,74,122,0.12); }
+.gap-box.des { background: var(--sage-d); border: 1px solid rgba(107,143,113,0.2); }
+.gap-box.gap { background: var(--gold-l); border: 1px solid rgba(201,169,110,0.25); }
+.gap-box-label { font-family: var(--mono); font-size: 0.47rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); margin-bottom: 0.3rem; }
+.gap-box-val { font-family: var(--serif); font-size: 2rem; font-weight: 400; line-height: 1; }
+.gap-box.pres .gap-box-val { color: #1a4a7a; }
+.gap-box.des .gap-box-val { color: var(--sage); }
+.gap-box.gap .gap-box-val { color: var(--gold); }
+.gap-box-sub { font-size: 0.65rem; color: var(--ink3); margin-top: 0.2rem; line-height: 1.35; }
+.gap-arrow { display: flex; align-items: center; color: var(--border2); font-size: 0.9rem; flex-shrink: 0; }
+.gap-msg {
+  margin-top: 0.85rem; font-family: var(--serif); font-style: italic;
+  font-size: 0.88rem; color: var(--ink3); text-align: center; line-height: 1.55;
+  padding-top: 0.85rem; border-top: 1px solid var(--border);
+}
+
+/* Voice section */
+.voice-block { background: white; border-radius: var(--r-lg); padding: 1.4rem; border: 1px solid var(--border); box-shadow: var(--sh); margin-bottom: 1.5rem; }
+.voice-prompt {
+  font-family: var(--serif); font-size: 1rem; font-weight: 400; line-height: 1.6;
+  color: var(--ink2); margin-bottom: 0.7rem;
+}
+.voice-starter {
+  font-size: 0.85rem; color: var(--sage); font-style: italic; margin-bottom: 0.5rem;
+}
+.voice-textarea {
+  width: 100%; min-height: 90px; border: 1px solid var(--border2);
+  border-radius: 10px; padding: 0.8rem; resize: none; font-size: 0.88rem;
+  color: var(--ink); background: var(--warm); line-height: 1.6;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.voice-textarea:focus { outline: none; border-color: var(--sage); box-shadow: 0 0 0 3px rgba(107,143,113,0.1); }
+.voice-textarea::placeholder { color: var(--ink3); font-style: italic; }
+
+/* Action */
+.action-block { background: white; border-radius: var(--r-lg); padding: 1.4rem; border: 1px solid var(--border); box-shadow: var(--sh); margin-bottom: 1.5rem; }
+.action-prompt { font-size: 0.9rem; color: var(--ink2); line-height: 1.6; margin-bottom: 0.35rem; font-weight: 500; }
+.action-sub { font-size: 0.78rem; color: var(--ink3); margin-bottom: 0.8rem; line-height: 1.5; }
+.action-examples { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 0.8rem; }
+.action-ex {
+  background: var(--warm2); border: 1px solid var(--border);
+  border-radius: 100px; padding: 4px 11px; font-size: 0.7rem; color: var(--ink3);
+  cursor: pointer; transition: all 0.15s;
+}
+.action-ex:hover { background: var(--sage-d); border-color: rgba(107,143,113,0.3); color: var(--sage); }
+.action-input {
+  width: 100%; border: 1px solid var(--border2); border-radius: 10px;
+  padding: 0.8rem; font-size: 0.88rem; color: var(--ink);
+  background: var(--warm); transition: border-color 0.2s, box-shadow 0.2s;
+}
+.action-input:focus { outline: none; border-color: var(--sage); box-shadow: 0 0 0 3px rgba(107,143,113,0.1); }
+.action-input::placeholder { color: var(--ink3); }
+
+/* ─── STEP 6: REORDER ─── */
+#s-reorder { padding: 1rem 1.25rem 5rem; }
+.reorder-list { display: flex; flex-direction: column; gap: 8px; margin: 1.2rem 0; }
+.reorder-item {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: var(--r); padding: 0.9rem 1rem;
+  display: flex; align-items: center; gap: 12px;
+  cursor: grab; user-select: none; box-shadow: var(--sh);
+  transition: all 0.2s var(--ease);
+}
+.reorder-item:active { cursor: grabbing; }
+.reorder-item.dragging { opacity: 0.5; transform: scale(0.98); box-shadow: none; }
+.reorder-item.drag-over { border-color: var(--sage); background: var(--sage-d); }
+.reorder-handle { color: var(--ink3); font-size: 1rem; flex-shrink: 0; touch-action: none; }
+.reorder-rank {
+  font-family: var(--mono); font-size: 0.75rem; color: var(--ink3);
+  width: 20px; text-align: center; flex-shrink: 0;
+}
+.reorder-emoji { font-size: 1.2rem; flex-shrink: 0; }
+.reorder-name { flex: 1; font-size: 0.88rem; font-weight: 500; }
+.reorder-item.top1 { border-color: var(--gold); background: var(--gold-l); }
+.reorder-item.top1 .reorder-rank { color: var(--gold); }
+
+/* ─── STEP 7: MADRE ─── */
+#s-madre { padding: 1rem 1.25rem 5rem; }
+.madre-grid { display: flex; flex-direction: column; gap: 10px; margin: 1.2rem 0; }
+.madre-option {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: var(--r); padding: 1rem 1.2rem;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; transition: all 0.22s var(--ease);
+  box-shadow: var(--sh);
+}
+.madre-option:hover { border-color: var(--gold); background: var(--gold-l); transform: translateX(4px); }
+.madre-option.selected { border-color: var(--gold); background: var(--gold-l); }
+.madre-option.selected .madre-tag { opacity: 1; transform: translateX(0); }
+.madre-emoji { font-size: 1.3rem; flex-shrink: 0; }
+.madre-name { flex: 1; font-size: 0.88rem; font-weight: 500; }
+.madre-tag {
+  font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--gold);
+  background: rgba(201,169,110,0.15); border: 1px solid rgba(201,169,110,0.3);
+  border-radius: 100px; padding: 3px 10px;
+  opacity: 0; transform: translateX(-6px); transition: all 0.25s;
+}
+
+/* ─── STEP 8: INSIGHTS ─── */
+#s-insights { padding: 1rem 1.25rem 5rem; }
+.insight-card {
+  background: white; border-radius: var(--r-lg);
+  border: 1px solid var(--border); box-shadow: var(--sh);
+  margin-bottom: 12px; overflow: hidden;
+  animation: slideIn 0.5s var(--ease) both;
+}
+@keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.insight-card-head {
+  padding: 1rem 1.25rem 0.85rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.ins-icon-wrap {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.ins-type { font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.18em; text-transform: uppercase; }
+.ins-title { font-size: 0.82rem; font-weight: 600; margin-top: 1px; }
+.insight-card-body { padding: 0.9rem 1.25rem 1.1rem; }
+.ins-items { display: flex; flex-direction: column; gap: 7px; }
+.ins-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.83rem; color: var(--ink2); padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.ins-item:last-child { border-bottom: none; }
+.ins-rank {
+  font-family: var(--mono); font-size: 0.65rem;
+  color: var(--sage); width: 18px; flex-shrink: 0;
+}
+.ins-item-emoji { font-size: 1rem; flex-shrink: 0; }
+.ins-badge {
+  margin-left: auto; font-family: var(--mono); font-size: 0.48rem;
+  letter-spacing: 0.1em; padding: 2px 8px; border-radius: 100px;
+  border: 1px solid; white-space: nowrap;
+}
+.ins-highlight {
+  background: var(--navy); border-radius: 10px; padding: 1rem;
+  display: flex; gap: 10px; align-items: flex-start; margin-top: 0.5rem;
+}
+.ins-hl-icon { font-size: 1.2rem; flex-shrink: 0; }
+.ins-hl-label { font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 0.3rem; }
+.ins-hl-text { font-size: 0.82rem; color: rgba(255,255,255,0.75); line-height: 1.55; }
+
+/* ─── STEP 9: REALM ─── */
+#s-realm { padding: 1rem 1.25rem 5rem; }
+.realm-section { margin-bottom: 1.5rem; }
+.realm-ch-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0.85rem 1.1rem; background: white;
+  border-radius: var(--r) var(--r) 0 0;
+  border: 1px solid var(--border); border-bottom: none;
+}
+.realm-ch-emoji { font-size: 1.2rem; }
+.realm-ch-name { font-size: 0.88rem; font-weight: 600; }
+.realm-ch-tag {
+  margin-left: auto; font-family: var(--mono); font-size: 0.48rem;
+  letter-spacing: 0.1em; padding: 2px 8px;
+  border-radius: 100px; border: 1px solid;
+}
+.realm-connections {
+  background: white; border: 1px solid var(--border);
+  border-radius: 0 0 var(--r) var(--r); padding: 1rem 1.1rem;
+  box-shadow: var(--sh);
+}
+.realm-flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.realm-tag {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: 8px; border: 1px solid;
+  font-size: 0.75rem; font-weight: 500; transition: all 0.2s;
+}
+.realm-arrow { color: var(--border2); font-size: 0.75rem; flex-shrink: 0; }
+
+/* ─── STEP 10: RESULT ─── */
+#s-result { background: var(--navy); min-height: 100dvh; color: white; padding: 1rem 1.25rem 3rem; }
+.result-header { text-align: center; padding: 2rem 0 1.5rem; }
+.result-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--sage);
+  border: 1px solid rgba(107,143,113,0.3); border-radius: 100px;
+  padding: 5px 14px; margin-bottom: 1.5rem;
+  background: rgba(107,143,113,0.08);
+}
+.result-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--sage); }
+.result-h {
+  font-family: var(--serif); font-size: clamp(2.2rem, 7vw, 4rem);
+  font-weight: 400; line-height: 1.1; letter-spacing: -0.02em;
+  color: white; margin-bottom: 0.5rem;
+}
+.result-h em { font-style: italic; color: var(--sage); }
+.result-sub { font-size: 0.85rem; color: rgba(255,255,255,0.4); font-weight: 300; }
+.result-section { margin-bottom: 1.2rem; }
+.result-card {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r-lg); overflow: hidden;
+}
+.result-card-head {
+  padding: 0.9rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; gap: 8px;
+}
+.result-card-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
+}
+.result-card-label { font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+.result-card-title { font-size: 0.8rem; font-weight: 600; color: white; margin-top: 1px; }
+.result-card-body { padding: 1rem 1.25rem 1.2rem; }
+
+.result-top3 { display: flex; flex-direction: column; gap: 8px; }
+.result-top3-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.result-top3-item:last-child { border: none; }
+.result-rank { font-family: var(--mono); font-size: 0.65rem; color: var(--sage); width: 18px; flex-shrink: 0; }
+.result-emoji { font-size: 1rem; flex-shrink: 0; }
+.result-name { flex: 1; font-size: 0.85rem; color: rgba(255,255,255,0.8); }
+.result-gap-pill {
+  font-family: var(--mono); font-size: 0.5rem; padding: 2px 8px;
+  border-radius: 100px; border: 1px solid rgba(201,169,110,0.3);
+  color: var(--gold); background: rgba(201,169,110,0.1);
+}
+
+.madre-result {
+  display: flex; align-items: center; gap: 12px; padding: 0.2rem 0;
+}
+.madre-result-emoji { font-size: 1.8rem; }
+.madre-result-name {
+  font-family: var(--serif); font-size: 1.3rem; font-weight: 400;
+  color: var(--gold); line-height: 1.2;
+}
+.madre-result-sub { font-size: 0.75rem; color: rgba(255,255,255,0.35); margin-top: 2px; }
+
+.result-domino {
+  background: linear-gradient(135deg, rgba(107,143,113,0.15), rgba(107,143,113,0.05));
+  border-radius: 12px; padding: 1rem;
+}
+.domino-ch { display: flex; align-items: center; gap: 8px; margin-bottom: 0.6rem; }
+.domino-emoji { font-size: 1.2rem; }
+.domino-name { font-size: 0.88rem; color: var(--sage); font-weight: 600; }
+.domino-action { font-size: 0.8rem; color: rgba(255,255,255,0.55); line-height: 1.55; font-style: italic; }
+
+.result-closing {
+  text-align: center; padding: 2rem 1rem 1rem;
+  border-top: 1px solid rgba(255,255,255,0.07); margin-top: 1.5rem;
+}
+.result-quote {
+  font-family: var(--serif); font-style: italic; font-size: 1.15rem;
+  color: rgba(255,255,255,0.6); line-height: 1.65; margin-bottom: 2rem;
+}
+.result-quote em { color: var(--sage); font-style: normal; }
+.result-restart {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--r); padding: 12px 28px; font-size: 0.82rem;
+  color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.2s;
+}
+.result-restart:hover { background: rgba(255,255,255,0.12); color: white; }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200; background: rgba(12,22,32,0.6);
+  backdrop-filter: blur(4px); display: flex; align-items: flex-end;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-sheet {
+  background: var(--warm); border-radius: 24px 24px 0 0;
+  width: 100%; padding: 1.25rem 1.25rem 2rem;
+  transform: translateY(100%); transition: transform 0.4s var(--ease);
+}
+.modal-overlay.open .modal-sheet { transform: translateY(0); }
+.modal-handle { width: 40px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 1.2rem; }
+.modal-title { font-family: var(--serif); font-size: 1.3rem; margin-bottom: 1rem; }
+.modal-input {
+  width: 100%; border: 1.5px solid var(--border2); border-radius: 10px;
+  padding: 12px 14px; font-size: 0.95rem; background: white;
+  color: var(--ink); margin-bottom: 0.8rem; transition: border-color 0.2s;
+}
+.modal-input:focus { outline: none; border-color: var(--sage); }
+.emoji-picker { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.2rem; }
+.emoji-opt {
+  width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
+  background: white; cursor: pointer; font-size: 1.2rem;
+  display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.emoji-opt:hover, .emoji-opt.sel { border-color: var(--sage); background: var(--sage-d); }
+
+/* ─── IDENTITY ENGINE ─── */
+#s-identity { padding: 1rem 1.25rem 5rem; }
+.id-hero {
+  background: var(--navy); border-radius: var(--r-lg); padding: 1.75rem 1.5rem;
+  margin-bottom: 1.2rem; position: relative; overflow: hidden;
+}
+.id-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 90% 10%, rgba(107,143,113,0.22), transparent 55%),
+              radial-gradient(ellipse at 10% 90%, rgba(201,169,110,0.12), transparent 55%);
+}
+.id-hero-eyebrow {
+  font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 0.75rem;
+  display: flex; align-items: center; gap: 8px; position: relative;
+}
+.id-hero-eyebrow::before { content: ''; width: 16px; height: 1px; background: rgba(255,255,255,0.2); }
+.id-identikit {
+  font-family: var(--serif); font-size: 1.08rem; font-weight: 400;
+  color: rgba(255,255,255,0.82); line-height: 1.7; position: relative;
+}
+.id-pattern-badge {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 1.2rem;
+  background: rgba(107,143,113,0.18); border: 1px solid rgba(107,143,113,0.35);
+  border-radius: 100px; padding: 7px 16px; position: relative;
+}
+.id-pattern-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); }
+.id-pattern-name { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage); }
+.id-card {
+  background: white; border: 1px solid var(--border); border-radius: var(--r-lg);
+  overflow: hidden; margin-bottom: 10px; box-shadow: var(--sh);
+  animation: slideIn 0.5s var(--ease) both;
+}
+.id-card-head {
+  padding: 1rem 1.2rem 0.85rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.id-card-icon {
+  width: 34px; height: 34px; border-radius: 9px; display: flex;
+  align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0;
+}
+.id-card-type { font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.18em; text-transform: uppercase; }
+.id-card-title { font-size: 0.82rem; font-weight: 600; margin-top: 1px; }
+.id-card-body { padding: 0.9rem 1.2rem 1.1rem; }
+.id-list { display: flex; flex-direction: column; gap: 8px; }
+.id-list-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 0.55rem 0; border-bottom: 1px solid var(--border);
+  font-size: 0.83rem; color: var(--ink2); line-height: 1.55;
+}
+.id-list-item:last-child { border: none; padding-bottom: 0; }
+.id-list-bullet { font-size: 0.7rem; margin-top: 3px; flex-shrink: 0; }
+.id-punto-cieco {
+  background: rgba(26,26,26,0.03); border-radius: 10px; padding: 0.85rem 1rem;
+  font-family: var(--serif); font-style: italic; font-size: 0.88rem;
+  color: var(--ink2); line-height: 1.65; margin-bottom: 8px;
+  border-left: 2.5px solid var(--border2);
+}
+.id-punto-cieco:last-child { margin-bottom: 0; }
+.id-domino-box {
+  background: var(--navy); border-radius: 12px; padding: 1.1rem;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.id-domino-emoji { font-size: 1.4rem; flex-shrink: 0; }
+.id-domino-label { font-family: var(--mono); font-size: 0.47rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 0.25rem; }
+.id-domino-name { font-size: 0.9rem; font-weight: 600; color: var(--sage); margin-bottom: 0.3rem; }
+.id-domino-why { font-size: 0.78rem; color: rgba(255,255,255,0.5); line-height: 1.55; }
+.id-roadmap { display: flex; flex-direction: column; gap: 0; }
+.id-week {
+  display: flex; gap: 12px; align-items: flex-start; padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.id-week:last-child { border: none; padding-bottom: 0; }
+.id-week-left { display: flex; flex-direction: column; align-items: center; gap: 0; flex-shrink: 0; }
+.id-week-num {
+  font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: white; background: var(--sage);
+  border-radius: 100px; padding: 3px 9px; white-space: nowrap;
+}
+.id-week-line { width: 1px; flex: 1; min-height: 16px; background: var(--border2); margin: 4px auto 0; }
+.id-week:last-child .id-week-line { display: none; }
+.id-week-title { font-size: 0.82rem; font-weight: 600; margin-bottom: 0.2rem; color: var(--ink); }
+.id-week-text { font-size: 0.78rem; color: var(--ink3); line-height: 1.6; font-style: italic; }
+
+/* ─── REPORT ─── */
+#s-report { padding-top: 58px; }
+.rpt-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem; background: var(--warm);
+  border-bottom: 1px solid var(--border); position: sticky; top: 58px; z-index: 40;
+  gap: 8px; flex-wrap: wrap;
+}
+.rpt-title-block .rpt-eyebrow {
+  font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--sage); margin-bottom: 2px;
+}
+.rpt-title-block h2 {
+  font-family: var(--serif); font-size: 1.35rem; font-weight: 400;
+  color: var(--ink); line-height: 1.2;
+}
+.rpt-actions { display: flex; gap: 7px; }
+.rpt-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border2);
+  background: white; font-size: 0.75rem; font-weight: 500; color: var(--ink2);
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.rpt-btn:hover { border-color: var(--sage); color: var(--sage); }
+.rpt-btn.primary { background: var(--navy); color: white; border-color: var(--navy); }
+.rpt-btn.primary:hover { background: var(--navy3); }
+.rpt-body { padding: 1.5rem; max-width: 820px; margin: 0 auto; }
+.rpt-section { margin-bottom: 2.25rem; }
+.rpt-section-label {
+  font-family: var(--mono); font-size: 0.54rem; letter-spacing: 0.26em;
+  text-transform: uppercase; color: rgba(14,21,32,0.4); margin-bottom: 0.75rem;
+  display: flex; align-items: center; gap: 10px; font-weight: 500;
+}
+.rpt-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border2); }
+/* book index */
+.rpt-book-index { background: white; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh); }
+.rpt-book-row {
+  display: flex; align-items: center; gap: 12px; padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+.rpt-book-row:last-child { border: none; }
+.rpt-book-rank { font-family: var(--mono); font-size: 0.65rem; color: rgba(14,21,32,0.35); width: 18px; flex-shrink: 0; }
+.rpt-book-emoji { font-size: 1.1rem; flex-shrink: 0; }
+.rpt-book-name { flex: 1; font-size: 0.9rem; font-weight: 600; color: var(--ink); }
+.rpt-book-scores {
+  display: flex; gap: 10px; font-family: var(--mono); font-size: 0.6rem;
+  color: var(--ink3); flex-shrink: 0; align-items: center; flex-wrap: wrap;
+}
+.rpt-score-chip { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.rpt-score-val { font-size: 0.82rem; font-weight: 700; color: var(--ink); }
+.rpt-score-lbl { font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(14,21,32,0.4); }
+.rpt-score-chip.pres .rpt-score-val { color: #1a4a7a; }
+.rpt-score-chip.des .rpt-score-val { color: var(--sage); }
+.rpt-score-chip.gap .rpt-score-val { color: var(--gold); }
+/* radar */
+.rpt-radar-wrap { background: white; border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1.5rem; box-shadow: var(--sh); text-align: center; }
+.rpt-radar-title { font-family: var(--serif); font-size: 1.05rem; font-weight: 400; color: var(--ink); margin-bottom: 0.3rem; }
+.rpt-radar-sub { font-size: 0.78rem; color: var(--ink2); margin-bottom: 1rem; font-style: italic; }
+.rpt-radar-legend { display: flex; gap: 1.5rem; justify-content: center; margin-top: 1rem; }
+.rpt-legend-item { display: flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 0.6rem; color: var(--ink2); font-weight: 500; }
+.rpt-legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+#radarCanvas { max-width: 340px; height: auto; display: block; margin: 0 auto; min-width: 240px; }
+/* identikit */
+.rpt-identikit { background: var(--navy); border-radius: var(--r-lg); padding: 1.75rem; position: relative; overflow: hidden; }
+.rpt-identikit::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 10%, rgba(107,143,113,0.2),transparent 55%); pointer-events: none; }
+.rpt-identikit-text { font-family: var(--serif); font-size: 1.02rem; font-weight: 400; color: rgba(255,255,255,0.88); line-height: 1.78; position: relative; }
+/* pattern badge */
+.rpt-pattern { background: white; border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1.3rem; box-shadow: var(--sh); }
+.rpt-pattern-name {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--navy); color: var(--sage);
+  font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+  border-radius: 100px; padding: 8px 18px; margin-bottom: 0.9rem;
+}
+.rpt-pattern-why { font-size: 0.82rem; color: var(--ink2); line-height: 1.65; }
+/* top3 cards */
+.rpt-top3-grid { display: flex; flex-direction: column; gap: 10px; }
+.rpt-top3-card { background: white; border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1.1rem 1.2rem; box-shadow: var(--sh); display: flex; align-items: center; gap: 12px; }
+.rpt-top3-rank { font-family: var(--mono); font-size: 1.1rem; font-weight: 400; color: var(--sage); width: 24px; flex-shrink: 0; font-style: italic; }
+.rpt-top3-emoji { font-size: 1.4rem; flex-shrink: 0; }
+.rpt-top3-body { flex: 1; }
+.rpt-top3-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.2rem; }
+.rpt-top3-why { font-size: 0.78rem; color: var(--ink2); line-height: 1.58; }
+/* madre */
+.rpt-madre { background: linear-gradient(135deg, var(--navy) 0%, var(--navy3) 100%); border-radius: var(--r-lg); padding: 1.5rem; border: 1px solid rgba(201,169,110,0.2); box-shadow: var(--sh-lg); }
+.rpt-madre-eyebrow { font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(201,169,110,0.6); margin-bottom: 0.7rem; }
+.rpt-madre-main { display: flex; align-items: center; gap: 14px; margin-bottom: 0.85rem; }
+.rpt-madre-emoji { font-size: 2.2rem; }
+.rpt-madre-name { font-family: var(--serif); font-size: 1.5rem; color: var(--gold); line-height: 1.2; }
+.rpt-madre-desc { font-size: 0.83rem; color: rgba(255,255,255,0.68); line-height: 1.65; font-style: italic; }
+/* potenziale */
+.rpt-pot { background: white; border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1.4rem; box-shadow: var(--sh); }
+.rpt-pot-header { display: flex; align-items: center; gap: 14px; margin-bottom: 1.1rem; }
+.rpt-pot-emoji { font-size: 1.8rem; flex-shrink: 0; }
+.rpt-pot-title-block { display: flex; flex-direction: column; gap: 5px; }
+.rpt-pot-ch-name { font-size: 1.05rem; font-weight: 700; color: var(--ink); line-height: 1.2; }
+.rpt-pot-tag { display: inline-flex; align-items: center; font-family: var(--mono); font-size: 0.47rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); background: var(--gold-l); border: 1px solid rgba(201,169,110,0.3); border-radius: 100px; padding: 3px 10px; width: fit-content; }
+.rpt-pot-stats { display: flex; align-items: center; background: var(--warm2); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.9rem; }
+.rpt-pot-stat { flex: 1; text-align: center; }
+.rpt-pot-stat-val { font-weight: 800; font-size: 1.4rem; color: var(--ink); line-height: 1; margin-bottom: 3px; }
+.rpt-pot-stat-lbl { font-family: var(--mono); font-size: 0.45rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); }
+.rpt-pot-stat-div { width: 1px; height: 36px; background: var(--border2); flex-shrink: 0; margin: 0 0.5rem; }
+.rpt-pot-insight { font-size: 0.82rem; color: var(--ink2); line-height: 1.65; padding: 0.8rem 1rem; background: var(--warm); border-radius: 9px; border-left: 2.5px solid var(--gold); }
+/* domino */
+.rpt-domino { background: var(--sage-l); border: 1px solid rgba(107,143,113,0.25); border-radius: var(--r-lg); padding: 1.4rem; box-shadow: var(--sh); }
+.rpt-domino-header { display: flex; align-items: center; gap: 14px; margin-bottom: 1.1rem; }
+.rpt-domino-emoji { font-size: 1.8rem; flex-shrink: 0; }
+.rpt-domino-title-block { display: flex; flex-direction: column; gap: 5px; }
+.rpt-domino-name { font-size: 1.05rem; font-weight: 700; color: var(--ink); line-height: 1.2; }
+.rpt-domino-tag { font-family: var(--mono); font-size: 0.47rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sage); background: white; border: 1px solid rgba(107,143,113,0.3); border-radius: 100px; padding: 3px 10px; width: fit-content; }
+.rpt-domino-reason { background: white; border-radius: 10px; padding: 0.9rem 1rem; margin-bottom: 0.85rem; border: 1px solid rgba(107,143,113,0.12); }
+.rpt-domino-reason-label { font-family: var(--mono); font-size: 0.47rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage); margin-bottom: 0.35rem; }
+.rpt-domino-reason-text { font-size: 0.82rem; color: var(--ink2); line-height: 1.65; }
+.rpt-domino-cascades { margin-bottom: 0.85rem; }
+.rpt-domino-cascades-label { font-family: var(--mono); font-size: 0.47rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink3); margin-bottom: 0.5rem; }
+.rpt-domino-cascades-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.rpt-domino-cascade-item { background: white; border: 1px solid rgba(107,143,113,0.2); border-radius: 7px; padding: 4px 11px; font-size: 0.76rem; font-weight: 500; color: var(--sage); }
+.rpt-domino-action-block { background: var(--navy); border-radius: 10px; padding: 0.9rem 1rem; }
+.rpt-domino-action-label { font-family: var(--mono); font-size: 0.47rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.35rem; }
+.rpt-domino-action-text { font-family: var(--serif); font-style: italic; font-size: 0.95rem; color: rgba(255,255,255,0.85); line-height: 1.6; }
+/* azione */
+.rpt-azione { background: var(--navy); border-radius: var(--r-lg); padding: 1.4rem; text-align: center; }
+.rpt-azione-label { font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 0.6rem; }
+.rpt-azione-text { font-family: var(--serif); font-size: 1.15rem; color: rgba(255,255,255,0.95); line-height: 1.65; font-style: italic; }
+.rpt-azione-sub { font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-top: 0.6rem; font-family: var(--mono); letter-spacing: 0.1em; }
+/* roadmap */
+.rpt-roadmap { background: white; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh); }
+.rpt-week { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+.rpt-week:last-child { border: none; }
+.rpt-week-num { width: 80px; flex-shrink: 0; background: var(--warm2); padding: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border-right: 1px solid var(--border); }
+.rpt-week-n { font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sage); }
+.rpt-week-title-small { font-family: var(--sans); font-size: 0.72rem; font-weight: 700; color: var(--ink2); text-align: center; line-height: 1.3; }
+.rpt-week-body { padding: 0.9rem 1.1rem; flex: 1; }
+.rpt-week-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.28rem; color: var(--ink); }
+.rpt-week-text { font-size: 0.8rem; color: var(--ink2); line-height: 1.62; font-style: italic; }
+/* closing */
+.rpt-closing { text-align: center; padding: 2rem 1.25rem 1rem; }
+.rpt-closing-quote { font-family: var(--serif); font-style: italic; font-size: 1.05rem; color: var(--ink3); line-height: 1.7; margin-bottom: 1.5rem; }
+.rpt-closing-quote em { color: var(--sage); font-style: normal; }
+.rpt-restart { background: transparent; border: 1px solid var(--border2); border-radius: 10px; padding: 10px 22px; font-size: 0.78rem; color: var(--ink3); cursor: pointer; transition: all 0.2s; }
+.rpt-restart:hover { border-color: var(--sage); color: var(--sage); }
+
+/* ─── PRINT / PDF PREMIUM ─── */
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { background: white !important; margin: 0; }
+  #prog-wrap, #topnav, #s-welcome, #s-select, #s-dive,
+  #s-reorder, #s-madre, #s-insights, #s-identity, #s-realm,
+  #s-result, #edit-modal, .modal-overlay, .fab-wrap,
+  .rpt-topbar, .rpt-restart, #s-booktitle { display: none !important; }
+  #s-report { display: block !important; padding-top: 0 !important; background: white !important; }
+  .rpt-body { padding: 0; max-width: 100%; }
+  .screen { display: none !important; }
+  #s-report { display: block !important; }
+
+  /* Page breaks */
+  .pdf-page { page-break-after: always; break-after: page; }
+  .pdf-page:last-of-type { page-break-after: auto; break-after: auto; }
+  .rpt-section { page-break-inside: avoid; margin-bottom: 1rem; }
+
+  /* Color-preserve dark sections */
+  .rpt-identikit { background: #0c1620 !important; -webkit-print-color-adjust: exact; }
+  .rpt-madre     { background: #0c1620 !important; -webkit-print-color-adjust: exact; }
+  .rpt-azione    { background: #0c1620 !important; -webkit-print-color-adjust: exact; }
+  .rpt-domino-action-block { background: #0c1620 !important; -webkit-print-color-adjust: exact; }
+  .pdf-cover     { background: #0c1620 !important; -webkit-print-color-adjust: exact; }
+  .pdf-commit    { background: #f7f4ef !important; }
+
+  /* Hide screen-only elements inside report */
+  .rpt-print-header { display: none !important; }
+  .pdf-page { display: block !important; }
+  #radarCanvas { max-width: 260px; }
+  .pdf-cover-logo, .pdf-cover-title, .pdf-cover-meta { color: white !important; }
+}
+
+/* PDF cover page */
+.pdf-cover {
+  display: none;
+  background: var(--navy);
+  min-height: 100vh;
+  padding: 4rem 3.5rem 3.5rem;
+  position: relative;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+.pdf-cover::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 80% 20%, rgba(107,143,113,0.22), transparent),
+              radial-gradient(ellipse 40% 60% at 10% 80%, rgba(201,169,110,0.14), transparent);
+  pointer-events: none;
+}
+.pdf-cover-eyebrow {
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.28em;
+  text-transform: uppercase; color: rgba(255,255,255,0.55);
+  margin-bottom: 3.5rem; position: relative;
+}
+.pdf-cover-title {
+  font-family: var(--serif); font-size: clamp(3rem,7vw,5rem); font-weight: 400;
+  color: rgba(255,255,255,0.95); line-height: 1.06; letter-spacing: -0.02em;
+  margin-bottom: 0.6rem; position: relative;
+}
+.pdf-cover-title em { font-style: italic; color: #4adb8a; }
+.pdf-cover-sub {
+  font-size: 0.95rem; color: rgba(255,255,255,0.65); font-weight: 300;
+  margin-bottom: 0; position: relative; letter-spacing: 0.02em;
+}
+.pdf-cover-booktitle {
+  font-family: var(--serif); font-style: italic; font-size: 1.35rem;
+  color: rgba(255,255,255,0.88); line-height: 1.6;
+  border-left: 3px solid rgba(107,143,113,0.6); padding-left: 1.5rem;
+  margin-top: 2.5rem; position: relative;
+}
+.pdf-cover-meta-row {
+  display: flex; gap: 3rem; position: relative; margin-top: auto; padding-top: 3rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.pdf-cover-meta-item {}
+.pdf-cover-meta-label { font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.3rem; }
+.pdf-cover-meta-val { font-size: 0.95rem; color: rgba(255,255,255,0.85); font-weight: 500; }
+.pdf-cover-closing {
+  font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(255,255,255,0.35);
+  margin-top: 1.5rem; position: relative;
+}
+
+/* PDF page wrappers */
+.pdf-page {
+  display: none;
+  padding: 2.75rem 3rem 2.5rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: #f8f6f1;
+}
+.pdf-page-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  border-bottom: 1.5px solid rgba(14,21,32,0.15); padding-bottom: 0.7rem; margin-bottom: 2rem;
+}
+.pdf-page-brand { font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(14,21,32,0.45); font-weight: 400; }
+.pdf-page-num { font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.12em; color: rgba(14,21,32,0.3); }
+
+/* Action Roadmap */
+.rpt-action-roadmap { background: white; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh); }
+.rpt-action-row { display: flex; align-items: center; gap: 12px; padding: 0.85rem 1.2rem; border-bottom: 1px solid var(--border); }
+.rpt-action-row:last-child { border: none; }
+.rpt-action-emoji { font-size: 1.1rem; flex-shrink: 0; }
+.rpt-action-name { font-size: 0.82rem; font-weight: 600; color: var(--ink); width: 110px; flex-shrink: 0; }
+.rpt-action-arrow { color: var(--sage); font-size: 0.75rem; flex-shrink: 0; }
+.rpt-action-text { flex: 1; font-size: 0.82rem; color: var(--ink2); line-height: 1.5; font-style: italic; }
+
+/* Next 7 Days checklist */
+.rpt-7days { background: white; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh); }
+.rpt-7day-item { display: flex; align-items: flex-start; gap: 14px; padding: 0.9rem 1.2rem; border-bottom: 1px solid var(--border); }
+.rpt-7day-item:last-child { border: none; }
+.rpt-7day-box { width: 18px; height: 18px; border: 1.5px solid var(--border2); border-radius: 4px; flex-shrink: 0; margin-top: 1px; }
+.rpt-7day-text { font-size: 0.85rem; color: var(--ink2); line-height: 1.55; }
+
+/* My Commitment */
+.rpt-commit { background: white; border: 1px solid var(--border); border-radius: var(--r-lg); padding: 2rem; box-shadow: var(--sh); }
+.rpt-commit-intro { font-family: var(--serif); font-size: 1rem; color: var(--ink2); line-height: 1.7; margin-bottom: 1.5rem; font-style: italic; text-align: center; }
+.rpt-commit-hero { display: flex; align-items: center; gap: 14px; background: var(--navy); border-radius: 12px; padding: 1.2rem 1.4rem; margin-bottom: 1.5rem; }
+.rpt-commit-emoji { font-size: 1.6rem; flex-shrink: 0; }
+.rpt-commit-name { font-family: var(--serif); font-size: 1.1rem; color: var(--sage); margin-bottom: 0.2rem; }
+.rpt-commit-action { font-family: var(--serif); font-style: italic; font-size: 0.88rem; color: rgba(255,255,255,0.6); line-height: 1.55; }
+.rpt-commit-pledge { font-size: 0.82rem; color: var(--ink2); line-height: 1.65; margin-bottom: 2rem; text-align: center; padding: 1rem; background: var(--warm); border-radius: 10px; }
+.rpt-commit-sign-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.rpt-commit-sign { display: flex; flex-direction: column; gap: 8px; }
+.rpt-commit-sign-line { height: 1px; background: var(--border2); }
+.rpt-commit-sign-label { font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink3); }
+
+/* Closing page */
+.pdf-closing-page {
+  display: none; background: var(--navy); min-height: 100vh;
+  display: none; align-items: center; justify-content: center; text-align: center;
+  padding: 4rem 3rem; box-sizing: border-box; flex-direction: column; gap: 1rem;
+}
+.pdf-closing-brand { font-family: var(--serif); font-size: 3rem; color: white; font-weight: 400; }
+.pdf-closing-brand em { font-style: italic; color: #4adb8a; }
+.pdf-closing-tagline { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.35); line-height: 2; }
+
+.rpt-print-header { display: none; }
+
+
+/* ─── BOOK TITLE ─── */
+.bt-input-wrap { position: relative; margin-bottom: 1.2rem; }
+.bt-input { width: 100%; border: 1.5px solid var(--border2); border-radius: var(--r-lg); padding: 1rem 1.1rem; font-family: var(--serif); font-size: 1.1rem; font-weight: 400; color: var(--ink); background: white; transition: border-color 0.2s, box-shadow 0.2s; line-height: 1.4; }
+.bt-input:focus { outline: none; border-color: var(--sage); box-shadow: 0 0 0 3px rgba(107,143,113,0.1); }
+.bt-input::placeholder { color: var(--ink3); font-style: italic; }
+.bt-char-count { text-align: right; font-family: var(--mono); font-size: 0.5rem; color: var(--ink3); margin-top: 4px; }
+.bt-suggestions-label { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink3); margin-bottom: 0.7rem; }
+.bt-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 2rem; }
+.bt-chip { padding: 7px 15px; border-radius: 100px; border: 1px solid var(--border2); background: white; font-size: 0.8rem; color: var(--ink2); cursor: pointer; transition: all 0.18s; box-shadow: var(--sh); }
+.bt-chip:hover { border-color: var(--sage); color: var(--sage); background: var(--sage-l); }
+.bt-chip.sel { border-color: var(--sage); background: var(--sage-l); color: var(--sage); font-weight: 600; }
+
+/* ─── EMOTION STATE ─── */
+.emo-block { background: white; border-radius: var(--r-lg); padding: 1.1rem; border: 1px solid var(--border); box-shadow: var(--sh); margin-bottom: 1.2rem; }
+.emo-prompt { font-size: 0.88rem; font-weight: 500; color: var(--ink); margin-bottom: 0.85rem; }
+.emo-group-label { font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink3); margin-bottom: 0.4rem; margin-top: 0.6rem; }
+.emo-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.emo-chip { padding: 5px 12px; border-radius: 100px; border: 1.5px solid rgba(107,143,113,0.25); background: rgba(107,143,113,0.05); font-size: 0.76rem; color: rgba(80,120,85,0.9); cursor: pointer; transition: all 0.18s; user-select: none; }
+.emo-chip:hover { border-color: rgba(107,143,113,0.5); background: rgba(107,143,113,0.1); }
+.emo-chip.sel { border-color: var(--sage); background: var(--sage-l); color: #3a6e42; font-weight: 600; }
+.emo-chip.emo-neutral { border-color: rgba(201,169,110,0.3); background: rgba(201,169,110,0.06); color: rgba(160,130,45,0.9); }
+.emo-chip.emo-neutral:hover { border-color: rgba(201,169,110,0.5); }
+.emo-chip.emo-neutral.sel { border-color: var(--gold); background: var(--gold-l); color: var(--gold); }
+.emo-chip.emo-crit { border-color: rgba(175,60,60,0.2); background: rgba(175,60,60,0.05); color: rgba(155,50,50,0.9); }
+.emo-chip.emo-crit:hover { border-color: rgba(175,60,60,0.4); }
+.emo-chip.emo-crit.sel { border-color: #b03c3c; background: rgba(175,60,60,0.08); color: #b03c3c; font-weight: 600; }
+.emo-chip.emo-other { border-color: var(--border2); color: var(--ink3); background: var(--warm2); }
+
+/* ─── WHY ─── */
+.why-block { background: white; border-radius: var(--r-lg); padding: 1.1rem; border: 1px solid var(--border); box-shadow: var(--sh); margin-bottom: 1.2rem; }
+.why-prompt { font-size: 0.88rem; font-weight: 500; color: var(--ink); margin-bottom: 0.55rem; }
+.why-count { font-family: var(--mono); font-size: 0.5rem; color: var(--ink3); text-align: right; margin-top: 4px; }
+
+/* ─── REPORT: EMOTIONAL PROFILE ─── */
+.rpt-emo-table { background: white; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh); }
+.rpt-emo-row { display: flex; align-items: center; gap: 10px; padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--border); }
+.rpt-emo-row:last-child { border: none; }
+.rpt-emo-emoji { font-size: 1rem; flex-shrink: 0; }
+.rpt-emo-name { flex: 1; font-size: 0.82rem; font-weight: 600; }
+.rpt-emo-arrow { color: var(--border2); font-size: 0.7rem; flex-shrink: 0; }
+.rpt-emo-badge { font-size: 0.72rem; padding: 2px 9px; border-radius: 100px; border: 1px solid; white-space: nowrap; }
+.rpt-emo-density { display: flex; gap: 8px; margin-top: 10px; }
+.rpt-emo-den-item { flex: 1; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem; text-align: center; box-shadow: var(--sh); }
+.rpt-emo-den-val { font-weight: 800; font-size: 1.5rem; line-height: 1; margin-bottom: 2px; }
+.rpt-emo-den-lbl { font-family: var(--mono); font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3); }
+
+/* ─── REPORT: NARRATIVE ─── */
+.rpt-narrative { background: var(--navy); border-radius: var(--r-lg); padding: 1.75rem; position: relative; overflow: hidden; }
+.rpt-narrative::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 85% 15%, rgba(107,143,113,0.2), transparent 55%); pointer-events: none; }
+.rpt-narrative-text { font-family: var(--serif); font-size: 1.02rem; color: rgba(255,255,255,0.9); line-height: 1.8; position: relative; }
+
+/* ─── REPORT: BOOK TITLE EVOLUTION ─── */
+.rpt-bt-row { display: flex; }
+.rpt-bt-cell { flex: 1; padding: 1rem 1.2rem; background: white; border: 1px solid var(--border); }
+.rpt-bt-cell:first-child { border-radius: var(--r-lg) 0 0 var(--r-lg); border-right: none; }
+.rpt-bt-cell:last-child { border-radius: 0 var(--r-lg) var(--r-lg) 0; }
+.rpt-bt-cell-label { font-family: var(--mono); font-size: 0.46rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink3); margin-bottom: 0.35rem; }
+.rpt-bt-cell-val { font-family: var(--serif); font-size: 1rem; color: var(--ink); line-height: 1.4; }
+.rpt-bt-cell.suggested .rpt-bt-cell-val { color: var(--sage); }
+
+/* ─── REPORT: EVOLUTION DIRECTION ─── */
+.rpt-evdir { background: var(--sage-l); border: 1px solid rgba(107,143,113,0.2); border-radius: var(--r-lg); padding: 1.4rem; }
+.rpt-evdir-label { font-family: var(--mono); font-size: 0.49rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage); margin-bottom: 0.55rem; }
+.rpt-evdir-text { font-family: var(--serif); font-size: 1.03rem; color: var(--ink); line-height: 1.72; }
+
+/* ─── UTILITIES ─── */
+.text-center { text-align: center; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.flex-gap { display: flex; gap: 10px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- PROGRESS -->
+  <div id="prog-wrap"><div id="prog-bar" style="width:0%"></div></div>
+
+  <!-- NAV -->
+  <nav id="topnav">
+    <div class="nav-brand">Human <strong>Mirror</strong>™</div>
+    <div id="nav-step-ind"></div>
+    <button id="nav-back-btn" onclick="goBack()">← Indietro</button>
+  </nav>
+
+  <!-- ═══ S0: WELCOME ═══ -->
+  <div id="s-welcome" class="screen active">
+    <div class="welcome-badge">Life Chapters™</div>
+    <h1 class="welcome-h1">Il Libro della<br>Tua <em>Salute</em></h1>
+    <p class="welcome-sub">Se la tua vita fosse un libro, quali sarebbero i capitoli che la compongono?</p>
+    <div class="welcome-quote">
+      "Non serve cambiare tutto.<br>Serve iniziare dal punto giusto."
+    </div>
+    <div class="welcome-meta">
+      <span>📖 Percorso guidato</span>
+      <span>⏱ 20–30 min</span>
+      <span>🔒 Privato</span>
+    </div>
+    <div id="resume-banner">
+      <p>Hai una sessione in corso. <strong>Riprendi</strong> da dove ti sei fermato?</p>
+      <div class="resume-btns">
+        <button class="btn-sm" onclick="resumeSession()">Riprendi</button>
+        <button class="btn-sm-outline" onclick="startFresh()">Ricomincia</button>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="startJourney()" style="min-width:200px">Inizia il viaggio →</button>
+    <p class="mt-1" style="font-family:var(--mono);font-size:0.58rem;color:var(--ink3);letter-spacing:0.08em">Salvato automaticamente sul dispositivo</p>
+  </div>
+
+  <!-- ═══ S0b: BOOK TITLE ═══ -->
+  <div id="s-booktitle" class="screen" style="padding:1rem 1.25rem 5rem">
+    <div class="screen-header">
+      <div class="screen-label">Il tuo Libro™</div>
+      <h2 class="screen-h">Inizia da <em>qui</em></h2>
+      <p class="screen-d">Prima di tutto, come ti chiami? Poi daremo un titolo a questo periodo.</p>
+    </div>
+    <div class="bt-input-wrap" style="margin-bottom:0.4rem">
+      <input type="text" id="user-name-input" class="bt-input" placeholder="Scrivi il tuo nome…" maxlength="40" oninput="state.userName=this.value.trim();updateBookTitleQuestion();save()">
+    </div>
+    <div style="font-size:0.75rem;color:var(--ink3);margin-bottom:1.5rem;font-style:italic;padding-left:2px">Opzionale — personalizza le domande nel percorso</div>
+    <h2 class="screen-h" id="bt-question" style="font-size:1.45rem;margin-bottom:0.6rem;line-height:1.25">Se questo periodo della tua vita fosse un libro, che titolo avrebbe?</h2>
+    <div class="bt-input-wrap">
+      <input type="text" id="bt-input" class="bt-input" placeholder="Scrivi il titolo del tuo libro..." maxlength="80" oninput="state.bookTitle=this.value;save()">
+      <div class="bt-char-count" id="bt-count">0/80</div>
+    </div>
+    <div class="bt-suggestions-label">Oppure scegli un suggerimento:</div>
+    <div class="bt-chips" id="bt-chips"></div>
+    <div class="fab-wrap">
+      <button class="btn-primary" onclick="goToScreen('select')">Scegli i capitoli →</button>
+      <p class="fab-hint">Puoi cambiarlo in qualsiasi momento</p>
+    </div>
+  </div>
+
+  <!-- ═══ S1: SELECT CHAPTERS ═══ -->
+  <div id="s-select" class="screen">
+    <div class="screen-header">
+      <div class="screen-label">Capitoli</div>
+      <h2 class="screen-h" id="select-h">Scegli i tuoi <em>capitoli</em></h2>
+      <p class="screen-d">Seleziona da 5 a 15 capitoli. Puoi rinominarli o crearne di tuoi.</p>
+    </div>
+    <div class="sel-counter">
+      <div class="sel-count-text">Selezionati: <span class="sel-count-num" id="sel-count">0</span></div>
+      <div class="sel-range">min 5 · max 15</div>
+    </div>
+    <div class="chapters-grid" id="chapters-grid"></div>
+    <div class="fab-wrap">
+      <button class="btn-primary" id="btn-select-next" onclick="goToDive()" disabled>Esplora i capitoli →</button>
+      <p class="fab-hint" id="sel-hint">Seleziona almeno 5 capitoli</p>
+    </div>
+  </div>
+
+  <!-- ═══ S2: DEEP DIVE ═══ -->
+  <div id="s-dive" class="screen">
+    <div class="dive-ch-header">
+      <div style="position:relative;z-index:1">
+        <span class="dive-emoji" id="dive-emoji">❤️</span>
+        <div class="dive-ch-label" id="dive-ch-label">Capitolo</div>
+        <div class="dive-ch-name" id="dive-name">Corpo</div>
+      </div>
+      <div class="dive-nav">
+        <div class="dive-nav-dots" id="dive-dots"></div>
+        <span style="font-family:var(--mono);font-size:0.55rem;color:rgba(255,255,255,0.4)" id="dive-progress-txt"></span>
+      </div>
+    </div>
+
+    <!-- Importanza -->
+    <div class="slider-block">
+      <div class="sl-header">
+        <div class="sl-label">Quanto è importante per te?</div>
+        <div class="sl-value-display" id="imp-val">5</div>
+      </div>
+      <div class="sl-desc">Il peso che questo capitolo ha nella tua vita — non quanto dovresti dargli, ma quanto davvero dai.</div>
+      <input type="range" min="0" max="10" value="5" id="sl-imp" oninput="updateSlider(this,'imp-val')">
+    </div>
+
+    <!-- Priority Score™ -->
+    <div class="slider-block">
+      <div class="sl-header">
+        <div class="sl-label" id="priority-label">Quanta attenzione richiede oggi questo capitolo?</div>
+        <div class="sl-value-display" id="pri-val">5</div>
+      </div>
+      <div class="sl-desc">Non quanto è importante in assoluto, ma quanto senti che richiede intervento adesso.</div>
+      <input type="range" min="0" max="10" value="5" id="sl-pri" oninput="updateSlider(this,'pri-val')">
+    </div>
+
+    <!-- Presente -->
+    <div class="slider-block">
+      <div class="sl-header">
+        <div class="sl-label">Com'è oggi questo capitolo?</div>
+        <div class="sl-value-display" id="pres-val">5</div>
+      </div>
+      <div class="sl-desc">Non come lo descriveresti agli altri. Come lo vivi davvero tu, in questo momento.</div>
+      <input type="range" min="0" max="10" value="5" id="sl-pres" oninput="updateSlider(this,'pres-val');updateGap()">
+    </div>
+
+    <!-- Desiderato -->
+    <div class="slider-block">
+      <div class="sl-header">
+        <div class="sl-label">Come vorresti che fosse?</div>
+        <div class="sl-value-display" id="des-val">8</div>
+      </div>
+      <div class="sl-desc">Il tuo desired chapter — non la perfezione, ma dove senti che vorresti essere.</div>
+      <input type="range" min="0" max="10" value="8" id="sl-des" oninput="updateSlider(this,'des-val');updateGap()">
+    </div>
+
+    <!-- Gap display -->
+    <div class="gap-display">
+      <div class="gap-row">
+        <div class="gap-box pres">
+          <div class="gap-box-label">Present™</div>
+          <div class="gap-box-val" id="gap-pres">5</div>
+          <div class="gap-box-sub">Oggi</div>
+        </div>
+        <div class="gap-arrow">→</div>
+        <div class="gap-box des">
+          <div class="gap-box-label">Desired™</div>
+          <div class="gap-box-val" id="gap-des">8</div>
+          <div class="gap-box-sub">Dove vuoi essere</div>
+        </div>
+        <div class="gap-arrow">→</div>
+        <div class="gap-box gap">
+          <div class="gap-box-label">Gap™</div>
+          <div class="gap-box-val" id="gap-val">+3</div>
+          <div class="gap-box-sub">Potenziale</div>
+        </div>
+      </div>
+      <div class="gap-msg" id="gap-msg"></div>
+    </div>
+
+    <!-- Emotional State -->
+    <div class="emo-block">
+      <div class="emo-prompt" id="emo-prompt">Come ti fa sentire oggi questo capitolo?</div>
+      <input type="hidden" id="emotion-selected">
+      <div class="emo-group-label">🟢 Positive</div>
+      <div class="emo-chips">
+        <div class="emo-chip" data-emo="Gratitudine" onclick="selectEmotion(this,'Gratitudine')">Gratitudine</div>
+        <div class="emo-chip" data-emo="Entusiasmo" onclick="selectEmotion(this,'Entusiasmo')">Entusiasmo</div>
+        <div class="emo-chip" data-emo="Serenità" onclick="selectEmotion(this,'Serenità')">Serenità</div>
+        <div class="emo-chip" data-emo="Fiducia" onclick="selectEmotion(this,'Fiducia')">Fiducia</div>
+        <div class="emo-chip" data-emo="Soddisfazione" onclick="selectEmotion(this,'Soddisfazione')">Soddisfazione</div>
+        <div class="emo-chip" data-emo="Presenza" onclick="selectEmotion(this,'Presenza')">Presenza</div>
+      </div>
+      <div class="emo-group-label">🟡 Neutrale</div>
+      <div class="emo-chips">
+        <div class="emo-chip emo-neutral" data-emo="Curiosità" onclick="selectEmotion(this,'Curiosità')">Curiosità</div>
+        <div class="emo-chip emo-neutral" data-emo="Attesa" onclick="selectEmotion(this,'Attesa')">Attesa</div>
+        <div class="emo-chip emo-neutral" data-emo="Esplorazione" onclick="selectEmotion(this,'Esplorazione')">Esplorazione</div>
+        <div class="emo-chip emo-neutral" data-emo="Cambiamento" onclick="selectEmotion(this,'Cambiamento')">Cambiamento</div>
+      </div>
+      <div class="emo-group-label">🔴 Critica</div>
+      <div class="emo-chips">
+        <div class="emo-chip emo-crit" data-emo="Frustrazione" onclick="selectEmotion(this,'Frustrazione')">Frustrazione</div>
+        <div class="emo-chip emo-crit" data-emo="Confusione" onclick="selectEmotion(this,'Confusione')">Confusione</div>
+        <div class="emo-chip emo-crit" data-emo="Ansia" onclick="selectEmotion(this,'Ansia')">Ansia</div>
+        <div class="emo-chip emo-crit" data-emo="Rabbia" onclick="selectEmotion(this,'Rabbia')">Rabbia</div>
+        <div class="emo-chip emo-crit" data-emo="Paura" onclick="selectEmotion(this,'Paura')">Paura</div>
+        <div class="emo-chip emo-crit" data-emo="Stanchezza" onclick="selectEmotion(this,'Stanchezza')">Stanchezza</div>
+        <div class="emo-chip emo-crit" data-emo="Sovraccarico" onclick="selectEmotion(this,'Sovraccarico')">Sovraccarico</div>
+        <div class="emo-chip emo-other" data-emo="__other__" onclick="selectEmotion(this,'__other__')">➕ Altro</div>
+      </div>
+      <input type="text" id="custom-emo" class="action-input" placeholder="Scrivi l'emozione..." style="display:none;margin-top:8px" oninput="document.getElementById('emotion-selected').value=this.value;saveDiveData()">
+    </div>
+
+    <!-- Why -->
+    <div class="why-block">
+      <div class="why-prompt">Perché questo capitolo è importante per te?</div>
+      <textarea id="why-input" class="voice-textarea" maxlength="200" rows="2" placeholder="Scrivi in poche parole perché questo capitolo ha valore per te..." oninput="updateWhyCount();saveDiveData()"></textarea>
+      <div class="why-count" id="why-count">0/200</div>
+    </div>
+
+    <!-- Voce -->
+    <div class="voice-block">
+      <div class="voice-prompt">"Se questo capitolo potesse parlarti oggi, cosa ti direbbe?"</div>
+      <div class="voice-starter" id="voice-starter">Questo capitolo oggi mi sta dicendo che...</div>
+      <textarea class="voice-textarea" id="voice-ta" placeholder="Scrivi liberamente — non c'è risposta giusta." rows="3"></textarea>
+    </div>
+
+    <!-- Azione -->
+    <div class="action-block">
+      <div class="action-prompt">Qual è la più piccola azione che potresti fare entro 72 ore?</div>
+      <div class="action-sub">Non la migliore. Non la perfetta. La più possibile — quella che puoi fare domani.</div>
+      <div class="action-examples" id="action-examples"></div>
+      <input type="text" class="action-input" id="action-input" placeholder="Scrivi la tua azione...">
+    </div>
+
+    <div class="fab-wrap">
+      <button class="btn-primary" id="btn-dive-next" onclick="nextChapter()">Prossimo capitolo →</button>
+    </div>
+  </div>
+
+  <!-- ═══ S3: REORDER ═══ -->
+  <div id="s-reorder" class="screen">
+    <div class="screen-header">
+      <div class="screen-label">Priorità</div>
+      <h2 class="screen-h" id="reorder-h">Riordina per <em>priorità</em></h2>
+      <p class="screen-d" id="reorder-d">Non con la logica. Con la sensazione. Quale capitolo richiede davvero la tua attenzione oggi?</p>
+    </div>
+    <div class="reorder-list" id="reorder-list"></div>
+    <div class="fab-wrap">
+      <button class="btn-primary" onclick="goToMadre()">Scegli il Capitolo Madre™ →</button>
+    </div>
+  </div>
+
+  <!-- ═══ S4: MADRE ═══ -->
+  <div id="s-madre" class="screen">
+    <div class="screen-header">
+      <div class="screen-label">Capitolo Madre™</div>
+      <h2 class="screen-h">Il Capitolo <em>Madre™</em></h2>
+      <p class="screen-d" id="madre-d">Se dovessi sceglierne uno soltanto — quale influenza maggiormente tutti gli altri?</p>
+    </div>
+    <div class="madre-grid" id="madre-grid"></div>
+    <div class="fab-wrap">
+      <button class="btn-primary" id="btn-madre-next" onclick="goToInsights()" disabled>Vedi i tuoi insight →</button>
+    </div>
+  </div>
+
+  <!-- ═══ S5: INSIGHTS ═══ -->
+  <div id="s-insights" class="screen">
+    <div class="screen-header">
+      <div class="screen-label">Insight</div>
+      <h2 class="screen-h">Cosa ha visto <em>il sistema</em></h2>
+      <p class="screen-d">Basato sulle tue risposte — non un giudizio, una fotografia.</p>
+    </div>
+    <div id="insights-content"></div>
+    <div class="fab-wrap">
+      <button class="btn-primary" onclick="goToIdentity()">Il tuo Identikit Human Mirror™ →</button>
+    </div>
+  </div>
+
+  <!-- ═══ S5b: IDENTITY ENGINE ═══ -->
+  <div id="s-identity" class="screen">
+    <div class="screen-header">
+      <div class="screen-label">Identikit</div>
+      <h2 class="screen-h">Il tuo <em>Identikit</em></h2>
+      <p class="screen-d">Una lettura sintetica di ciò che emerge dai tuoi capitoli.</p>
+    </div>
+    <div id="identity-content"></div>
+    <div class="fab-wrap">
+      <button class="btn-primary" onclick="goToRealm()">Esplora i Realm™ →</button>
+    </div>
+  </div>
+
+  <!-- ═══ S6: REALM ═══ -->
+  <div id="s-realm" class="screen">
+    <div class="screen-header">
+      <div class="screen-label">Realm</div>
+      <h2 class="screen-h">Il tuo <em>sistema</em></h2>
+      <p class="screen-d">Ogni capitolo prioritario è connesso a un ecosistema. Vedili insieme per la prima volta.</p>
+    </div>
+    <div id="realm-content"></div>
+    <div class="fab-wrap">
+      <button class="btn-primary" onclick="goToResult()">Scopri il tuo libro →</button>
+    </div>
+  </div>
+
+  <!-- ═══ S7: RESULT ═══ -->
+  <div id="s-result" class="screen">
+    <div class="result-header">
+      <div class="result-badge">Human Mirror™ · Life Chapters™</div>
+      <h2 class="result-h" id="result-h">Il Tuo Libro <em>Oggi</em></h2>
+      <p class="result-sub">Una fotografia onesta — il punto di partenza per la tua evoluzione.</p>
+    </div>
+    <div id="result-content"></div>
+    <div class="result-closing">
+      <div class="result-quote">"Non serve cambiare tutto.<br>Serve iniziare dal <em>punto giusto</em>."</div>
+      <button class="btn-primary" onclick="goToReport()" style="margin-bottom:12px;background:var(--sage);box-shadow:0 4px 16px rgba(107,143,113,0.3)">📄 Genera il tuo Report™ →</button>
+      <button class="result-restart" onclick="confirmRestart()">Ricomincia da capo</button>
+    </div>
+  </div>
+
+  <!-- ═══ S8: REPORT ═══ -->
+  <div id="s-report" class="screen" style="background:var(--warm);padding:0 0 3rem">
+    <div id="report-root"></div>
+  </div>
+
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Personalizza capitolo</div>
+    <input type="text" class="modal-input" id="modal-name-input" placeholder="Nome del capitolo">
+    <div class="emoji-picker" id="emoji-picker"></div>
+    <div class="flex-gap">
+      <button class="btn-sage" onclick="saveModalEdit()" style="flex:1">Salva</button>
+      <button class="btn-outline" onclick="closeModal()" style="flex:1">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+const DEFAULT_CHAPTERS = [
+  {id:'corpo',    emoji:'❤️', name:'Corpo',            custom:false},
+  {id:'energia',  emoji:'⚡', name:'Energia',          custom:false},
+  {id:'sonno',    emoji:'🌙', name:'Sonno',            custom:false},
+  {id:'movimento',emoji:'🏃', name:'Movimento',        custom:false},
+  {id:'nutrizione',emoji:'🥗',name:'Nutrizione',       custom:false},
+  {id:'mente',    emoji:'🧠', name:'Mente',            custom:false},
+  {id:'emozioni', emoji:'💛', name:'Emozioni',         custom:false},
+  {id:'relazioni',emoji:'👥', name:'Relazioni',        custom:false},
+  {id:'lavoro',   emoji:'💼', name:'Lavoro',           custom:false},
+  {id:'finanze',  emoji:'💰', name:'Finanze',          custom:false},
+  {id:'tempo',    emoji:'⏳', name:'Tempo per Sé',     custom:false},
+  {id:'crescita', emoji:'🌱', name:'Crescita Personale',custom:false},
+  {id:'significato',emoji:'🎯',name:'Significato',     custom:false},
+  {id:'ambiente', emoji:'🌍', name:'Ambiente',         custom:false},
+  {id:'spirit',   emoji:'🙏', name:'Spiritualità',     custom:false},
+];
+
+const REALM_MAP = {
+  'corpo':      ['Sonno','Recupero','Movimento','Nutrizione','Stress','Idratazione'],
+  'energia':    ['Sonno','Recupero','Stress','Nutrizione','Movimento','Ritmo Circadiano'],
+  'sonno':      ['Ritmo Circadiano','Recupero','Stress','Ambiente','Schermo serale','Caffeina'],
+  'movimento':  ['Corpo','Energia','Recupero','Sonno','Stress','Postura'],
+  'nutrizione': ['Corpo','Energia','Intestino','Idratazione','Rituali pasto','Cibo emotivo'],
+  'mente':      ['Focus','Stress','Recupero','Crescita','Identità','Meditazione'],
+  'emozioni':   ['Stress','Confini','Relazioni','Identità','Corpo','Autocompassione'],
+  'relazioni':  ['Comunicazione','Confini','Tempo di Qualità','Supporto Sociale','Intimità','Conflitto'],
+  'lavoro':     ['Focus','Energia','Confini','Significato','Crescita','Stress'],
+  'finanze':    ['Stress','Sicurezza','Confini','Organizzazione','Abbondanza','Identità'],
+  'tempo':      ['Confini','Priorità','Energia','Relazioni','Rituali','Recupero'],
+  'crescita':   ['Identità','Mente','Curiosità','Lettura','Mentori','Riflessione'],
+  'significato':['Purpose','Valori','Lavoro','Relazioni','Contributo','Identità'],
+  'ambiente':   ['Casa','Natura','Ordine','Stimoli Visivi','Sonno','Abitudini'],
+  'spirit':     ['Silenzio','Natura','Rituali','Comunità','Valori','Consapevolezza'],
+};
+
+const ACTION_EXAMPLES = {
+  'corpo':      ['Fare 10 min di stretching domani mattina','Bere 2L di acqua per 3 giorni','Prenotare un check-up medico'],
+  'energia':    ['Andare a dormire 30 min prima stanotte','Eliminare il caffè dopo le 14:00','10 min di movimento al mattino'],
+  'sonno':      ['Spegnere gli schermi 30 min prima','Tenere la stanza fresca e buia','Alzarsi alla stessa ora per 3 giorni'],
+  'movimento':  ['Una camminata di 20 min domani','Salire le scale invece dell\'ascensore','Prenotare una lezione di prova'],
+  'nutrizione': ['Aggiungere verdura a un pasto domani','Preparare il pranzo la sera prima','Bere acqua prima di ogni pasto'],
+  'mente':      ['Scrivere 5 min di journaling al mattino','Spegnere le notifiche per 1 ora','10 min di lettura prima di dormire'],
+  'emozioni':   ['Scrivere come mi sento oggi','Chiamare qualcuno di cui mi fido','10 minuti di silenzio senza distrazioni'],
+  'relazioni':  ['Inviare un messaggio a qualcuno che manco','Organizzare una cena con chi ami','Dire "grazie" in modo specifico oggi'],
+  'lavoro':     ['Definire 3 priorità per domani','Fare una pausa ogni 90 minuti','Smettere di lavorare a un orario fisso'],
+  'finanze':    ['Guardare le uscite dell\'ultimo mese','Automatizzare un risparmio piccolo','Leggere un articolo di finanza personale'],
+  'tempo':      ['Bloccare 1 ora solo per me questa settimana','Dire no a un impegno non necessario','Fare qualcosa che amo domani'],
+  'crescita':   ['Leggere 10 pagine di un libro','Iscriversi a un corso online','Chiedere feedback a qualcuno di fiducia'],
+  'significato':['Scrivere perché mi alzo ogni mattina','Fare un\'azione che rispecchia i miei valori','Riflettere su cosa mi dà energia'],
+  'ambiente':   ['Riordinare una superficie in casa','Uscire 20 minuti all\'aria aperta','Aggiungere una pianta al mio spazio'],
+  'spirit':     ['5 minuti di silenzio al mattino','Una camminata senza telefono','Scrivere 3 cose per cui sono grato'],
+};
+
+const EMOJIS = ['❤️','⚡','🌙','🏃','🥗','🧠','💛','👥','💼','💰','⏳','🌱','🎯','🌍','🙏','🎨','🎵','📚','🏠','✈️','💪','🌿','🔥','💎','🦋','🌊','☀️','🌟','🫀','🧘'];
+
+const GAP_MESSAGES = [
+  g => g === 0 ? "Sei esattamente dove vuoi essere. Questo capitolo è in equilibrio." : null,
+  g => g <= 2 ? "Un piccolo passo separa il tuo presente dal tuo desiderato. Sei vicino." : null,
+  g => g <= 4 ? "C'è dello spazio da percorrere — e le risorse per farlo." : null,
+  g => g <= 6 ? "Un gap significativo, che segnala un'area con molto potenziale evolutivo." : null,
+  g => g > 6  ? "Questo capitolo chiede attenzione. La distanza è ampia — ed è dove si nasconde la leva più potente." : null,
+];
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let state = {
+  chapters: JSON.parse(JSON.stringify(DEFAULT_CHAPTERS)),
+  selected: [],
+  diveIndex: 0,
+  diveData: {}, // {id: {imp, pres, des, priority, voice, action, emotion, why}}
+  reorderOrder: [],
+  madre: null,
+  bookTitle: '',
+  userName: '',
+  currentScreen: 'welcome',
+  modalTarget: null,
+  modalEmoji: null,
+};
+
+const SCREENS = ['welcome','booktitle','select','dive','reorder','madre','insights','identity','realm','result','report'];
+const SCREEN_IDS = ['s-welcome','s-booktitle','s-select','s-dive','s-reorder','s-madre','s-insights','s-identity','s-realm','s-result','s-report'];
+const STEP_LABELS = ['','Il tuo Libro™','Capitoli','Deep Dive','Priorità','Capitolo Madre™','Insight','Identikit','Realm','Il tuo Libro','Report™'];
+
+function save() {
+  localStorage.setItem('lc_state', JSON.stringify(state));
+}
+
+function load() {
+  const s = localStorage.getItem('lc_state');
+  if (s) {
+    try {
+      const parsed = JSON.parse(s);
+      if (parsed.currentScreen && parsed.currentScreen !== 'welcome') {
+        return parsed;
+      }
+    } catch(e) {}
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = load();
+  if (saved) {
+    document.getElementById('resume-banner').style.display = 'flex';
+  }
+  renderChaptersGrid();
+  initSliders();
+  initBookTitle();
+  document.getElementById('edit-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('edit-modal')) closeModal();
+  });
+});
+
+function resumeSession() {
+  const saved = load();
+  if (saved) {
+    state = saved;
+    // Ensure chapters array is up to date
+    if (!state.chapters) state.chapters = JSON.parse(JSON.stringify(DEFAULT_CHAPTERS));
+    renderChaptersGrid();
+    goToScreen(state.currentScreen);
+  }
+}
+
+function startFresh() {
+  localStorage.removeItem('lc_state');
+  state = {
+    chapters: JSON.parse(JSON.stringify(DEFAULT_CHAPTERS)),
+    selected: [], diveIndex: 0, diveData: {}, reorderOrder: [],
+    madre: null, bookTitle: '', userName: '', currentScreen: 'welcome', modalTarget: null, modalEmoji: null,
+  };
+  renderChaptersGrid();
+  document.getElementById('resume-banner').style.display = 'none';
+}
+
+function startJourney() {
+  goToScreen('booktitle');
+}
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+let screenHistory = ['welcome'];
+
+function goToScreen(name) {
+  SCREEN_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('active');
+  });
+  const idx = SCREENS.indexOf(name);
+  const el = document.getElementById(SCREEN_IDS[idx]);
+  el.classList.remove('active');
+  void el.offsetWidth;
+  el.classList.add('active');
+  state.currentScreen = name;
+
+  // Progress
+  const pct = Math.round((idx / (SCREENS.length - 1)) * 100);
+  document.getElementById('prog-bar').style.width = pct + '%';
+
+  // Nav
+  document.getElementById('nav-step-ind').textContent = STEP_LABELS[idx] || '';
+  document.getElementById('nav-back-btn').style.display = idx > 0 ? 'block' : 'none';
+
+  screenHistory.push(name);
+  save();
+  window.scrollTo(0, 0);
+  // Trigger personalization on relevant screens
+  if (name === 'select') { updateSelCounter(); }
+  if (name === 'booktitle') { updateBookTitleQuestion(); }
+}
+
+function goBack() {
+  if (screenHistory.length > 1) {
+    screenHistory.pop();
+    const prev = screenHistory[screenHistory.length - 1];
+    if (prev === 'dive') {
+      // go back one chapter
+      if (state.diveIndex > 0) state.diveIndex--;
+      renderDive();
+    }
+    goToScreen(prev);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// CHAPTERS GRID
+// ═══════════════════════════════════════════════════════
+function renderChaptersGrid() {
+  const grid = document.getElementById('chapters-grid');
+  grid.innerHTML = '';
+  state.chapters.forEach(ch => {
+    const sel = state.selected.includes(ch.id);
+    const div = document.createElement('div');
+    div.className = 'ch-card' + (sel ? ' selected' : '');
+    div.id = 'ch-' + ch.id;
+    div.innerHTML = `
+      <div class="ch-check">✓</div>
+      <span class="ch-emoji">${ch.emoji}</span>
+      <div class="ch-name">${ch.name}</div>
+      <div class="ch-edit-row">
+        <button class="ch-edit-btn" onclick="openEditModal('${ch.id}',event)">✏ Rinomina</button>
+      </div>`;
+    div.addEventListener('click', e => {
+      if (e.target.classList.contains('ch-edit-btn') || e.target.closest('.ch-edit-btn')) return;
+      toggleChapter(ch.id);
+    });
+    grid.appendChild(div);
+  });
+
+  // Add custom button
+  const addBtn = document.createElement('div');
+  addBtn.className = 'ch-card ch-add-btn';
+  addBtn.innerHTML = `<span class="ch-add-icon">✦</span><div class="ch-name" style="text-align:center;font-size:0.75rem">Aggiungi capitolo</div>`;
+  addBtn.onclick = () => openAddModal();
+  grid.appendChild(addBtn);
+
+  updateSelCounter();
+}
+
+function toggleChapter(id) {
+  const idx = state.selected.indexOf(id);
+  if (idx >= 0) {
+    state.selected.splice(idx, 1);
+  } else {
+    if (state.selected.length >= 15) {
+      showFlash('Massimo 15 capitoli'); return;
+    }
+    state.selected.push(id);
+  }
+  const card = document.getElementById('ch-' + id);
+  if (card) card.classList.toggle('selected', state.selected.includes(id));
+  updateSelCounter();
+  save();
+}
+
+function updateSelCounter() {
+  const n = state.selected.length;
+  document.getElementById('sel-count').textContent = n;
+  const btn = document.getElementById('btn-select-next');
+  const hint = document.getElementById('sel-hint');
+  btn.disabled = n < 5;
+  if (n < 5) hint.textContent = `Seleziona almeno ${5 - n} capitoli in più`;
+  else if (n >= 15) hint.textContent = 'Massimo raggiunto · Pronto per continuare';
+  else hint.textContent = `${n} selezionati · Puoi aggiungerne ancora ${15 - n}`;
+  // Personalize heading
+  const h = document.getElementById('select-h');
+  if (h) h.innerHTML = state.userName
+    ? `${state.userName}, quali <em>capitoli</em> compongono il tuo libro?`
+    : `Scegli i tuoi <em>capitoli</em>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// EDIT MODAL
+// ═══════════════════════════════════════════════════════
+function openEditModal(id, e) {
+  e && e.stopPropagation();
+  const ch = state.chapters.find(c => c.id === id);
+  if (!ch) return;
+  state.modalTarget = id;
+  state.modalEmoji = ch.emoji;
+  document.getElementById('modal-name-input').value = ch.name;
+  renderEmojiPicker();
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function openAddModal() {
+  state.modalTarget = '__new__';
+  state.modalEmoji = '⭐';
+  document.getElementById('modal-name-input').value = '';
+  renderEmojiPicker();
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function renderEmojiPicker() {
+  const picker = document.getElementById('emoji-picker');
+  picker.innerHTML = EMOJIS.map(em => `
+    <div class="emoji-opt ${em === state.modalEmoji ? 'sel' : ''}" onclick="selectEmoji('${em}')">${em}</div>
+  `).join('');
+}
+
+function selectEmoji(em) {
+  state.modalEmoji = em;
+  document.querySelectorAll('.emoji-opt').forEach(el => {
+    el.classList.toggle('sel', el.textContent === em);
+  });
+}
+
+function saveModalEdit() {
+  const name = document.getElementById('modal-name-input').value.trim();
+  if (!name) { showFlash('Inserisci un nome'); return; }
+  if (state.modalTarget === '__new__') {
+    const id = 'custom_' + Date.now();
+    state.chapters.push({ id, emoji: state.modalEmoji, name, custom: true });
+    if (state.selected.length < 15) state.selected.push(id);
+  } else {
+    const ch = state.chapters.find(c => c.id === state.modalTarget);
+    if (ch) { ch.name = name; ch.emoji = state.modalEmoji; }
+  }
+  closeModal();
+  renderChaptersGrid();
+  save();
+}
+
+function closeModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+  state.modalTarget = null;
+}
+
+// ═══════════════════════════════════════════════════════
+// DIVE (CHAPTER DEEP DIVE)
+// ═══════════════════════════════════════════════════════
+function goToDive() {
+  state.diveIndex = 0;
+  state.selected.forEach(id => {
+    if (!state.diveData[id]) {
+      state.diveData[id] = { imp: 5, priority: 5, pres: 5, des: 8, voice: '', action: '', emotion: '', why: '' };
+    }
+  });
+  renderDive();
+  goToScreen('dive');
+}
+
+function renderDive() {
+  const id = state.selected[state.diveIndex];
+  const ch = state.chapters.find(c => c.id === id);
+  const data = state.diveData[id] || { imp:5, priority:5, pres:5, des:8, voice:'', action:'', emotion:'', why:'' };
+
+  document.getElementById('dive-emoji').textContent = ch.emoji;
+  document.getElementById('dive-name').textContent = ch.name;
+
+  // Personalize dive header label
+  const lbl = document.getElementById('dive-ch-label');
+  if (lbl) lbl.textContent = state.userName ? `${state.userName}, osserviamo questo capitolo` : 'Capitolo';
+
+  // Personalize priority label
+  const priLbl = document.getElementById('priority-label');
+  if (priLbl) priLbl.textContent = state.userName
+    ? `${state.userName}, quanta attenzione richiede oggi questo capitolo?`
+    : 'Quanta attenzione richiede oggi questo capitolo?';
+
+  // Personalize emotion prompt
+  const emoPr = document.getElementById('emo-prompt');
+  if (emoPr) emoPr.textContent = state.userName
+    ? `Come ti fa sentire oggi questo capitolo, ${state.userName}?`
+    : 'Come ti fa sentire oggi questo capitolo?';
+
+  // Dots
+  const dots = document.getElementById('dive-dots');
+  dots.innerHTML = state.selected.map((sid, i) =>
+    `<div class="dive-dot ${i === state.diveIndex ? 'act' : ''}"></div>`
+  ).join('');
+  document.getElementById('dive-progress-txt').textContent =
+    `${state.diveIndex + 1} / ${state.selected.length}`;
+
+  // Sliders
+  setSlider('sl-imp', 'imp-val', data.imp ?? 5);
+  setSlider('sl-pri', 'pri-val', data.priority ?? 5);
+  setSlider('sl-pres', 'pres-val', data.pres ?? 5);
+  setSlider('sl-des', 'des-val', data.des ?? 8);
+  updateGap();
+
+  // Emotion chips — restore selected state
+  const savedEmotion = data.emotion || '';
+  document.getElementById('emotion-selected').value = savedEmotion;
+  document.querySelectorAll('.emo-chip').forEach(c => {
+    c.classList.toggle('sel', c.dataset.emo === savedEmotion);
+  });
+  const customEmo = document.getElementById('custom-emo');
+  const PRESET_EMOS = ['Gratitudine','Entusiasmo','Serenità','Fiducia','Soddisfazione','Presenza','Curiosità','Attesa','Esplorazione','Cambiamento','Frustrazione','Confusione','Ansia','Rabbia','Paura','Stanchezza','Sovraccarico'];
+  if (savedEmotion && !PRESET_EMOS.includes(savedEmotion)) {
+    customEmo.value = savedEmotion; customEmo.style.display = 'block';
+  } else {
+    customEmo.value = ''; customEmo.style.display = 'none';
+  }
+
+  // Why
+  document.getElementById('why-input').value = data.why || '';
+  updateWhyCount();
+
+  // Voice
+  document.getElementById('voice-starter').textContent = `"${ch.name} oggi mi sta dicendo che..."`;
+  document.getElementById('voice-ta').value = data.voice || '';
+
+  // Examples
+  const examples = ACTION_EXAMPLES[id] || ['Dedicare 10 minuti a questo capitolo domani','Scrivere un pensiero su questo tema','Parlarne con qualcuno di fiducia'];
+  document.getElementById('action-examples').innerHTML = examples.slice(0,3).map(ex =>
+    `<div class="action-ex" onclick="setAction(this)">${ex}</div>`
+  ).join('');
+  document.getElementById('action-input').value = data.action || '';
+
+  // Button
+  const isLast = state.diveIndex === state.selected.length - 1;
+  document.getElementById('btn-dive-next').textContent = isLast ? 'Riordina i capitoli →' : 'Prossimo capitolo →';
+}
+
+function selectEmotion(chip, emo) {
+  document.querySelectorAll('.emo-chip').forEach(c => c.classList.remove('sel'));
+  chip.classList.add('sel');
+  document.getElementById('emotion-selected').value = emo;
+  const customEmo = document.getElementById('custom-emo');
+  if (emo === '__other__') { customEmo.style.display = 'block'; customEmo.focus(); document.getElementById('emotion-selected').value = customEmo.value || ''; }
+  else { customEmo.style.display = 'none'; customEmo.value = ''; }
+  saveDiveData();
+}
+
+function updateWhyCount() {
+  const el = document.getElementById('why-input');
+  const cnt = document.getElementById('why-count');
+  if (el && cnt) cnt.textContent = `${el.value.length}/200`;
+}
+
+function setSlider(sliderId, displayId, val) {
+  const sl = document.getElementById(sliderId);
+  const dp = document.getElementById(displayId);
+  sl.value = val;
+  dp.textContent = val;
+  sl.style.setProperty('--val', (val / 10 * 100) + '%');
+}
+
+function updateSlider(input, displayId) {
+  const val = input.value;
+  document.getElementById(displayId).textContent = val;
+  input.style.setProperty('--val', (val / 10 * 100) + '%');
+  saveDiveData();
+}
+
+function updateGap() {
+  const pres = parseInt(document.getElementById('sl-pres').value);
+  const des  = parseInt(document.getElementById('sl-des').value);
+  const gap  = des - pres;
+  document.getElementById('gap-pres').textContent = pres;
+  document.getElementById('gap-des').textContent  = des;
+  document.getElementById('gap-val').textContent  = gap > 0 ? '+' + gap : gap;
+
+  // Message
+  let msg = '';
+  for (const fn of GAP_MESSAGES) { const r = fn(gap); if (r) { msg = r; break; } }
+  document.getElementById('gap-msg').textContent = msg;
+  saveDiveData();
+}
+
+function setAction(el) {
+  document.getElementById('action-input').value = el.textContent;
+  saveDiveData();
+}
+
+function saveDiveData() {
+  const id = state.selected[state.diveIndex];
+  const emotionEl = document.getElementById('emotion-selected');
+  const whyEl = document.getElementById('why-input');
+  state.diveData[id] = {
+    imp:      parseInt(document.getElementById('sl-imp').value),
+    priority: parseInt(document.getElementById('sl-pri').value),
+    pres:     parseInt(document.getElementById('sl-pres').value),
+    des:      parseInt(document.getElementById('sl-des').value),
+    voice:    document.getElementById('voice-ta').value,
+    action:   document.getElementById('action-input').value,
+    emotion:  emotionEl ? emotionEl.value : (state.diveData[id]?.emotion || ''),
+    why:      whyEl ? whyEl.value : (state.diveData[id]?.why || ''),
+  };
+  save();
+}
+
+function nextChapter() {
+  saveDiveData();
+  if (state.diveIndex < state.selected.length - 1) {
+    state.diveIndex++;
+    renderDive();
+    window.scrollTo(0, 0);
+  } else {
+    goToReorder();
+  }
+}
+
+function initSliders() {
+  ['sl-imp','sl-pri','sl-pres','sl-des'].forEach(id => {
+    const sl = document.getElementById(id);
+    if (sl) {
+      sl.addEventListener('input', function() {
+        this.style.setProperty('--val', (this.value / 10 * 100) + '%');
+        saveDiveData();
+      });
+    }
+  });
+  document.getElementById('voice-ta').addEventListener('input', saveDiveData);
+  document.getElementById('action-input').addEventListener('input', saveDiveData);
+  document.getElementById('why-input').addEventListener('input', saveDiveData);
+}
+
+function n(fallback) { return state.userName || fallback || ''; }
+
+function updateBookTitleQuestion() {
+  const q = document.getElementById('bt-question');
+  if (!q) return;
+  q.innerHTML = state.userName
+    ? `${state.userName}, se questo periodo della tua vita fosse un libro, che titolo avrebbe?`
+    : 'Se questo periodo della tua vita fosse un libro, che titolo avrebbe?';
+  // Reorder personalization
+  const rh = document.getElementById('reorder-h');
+  if (rh) rh.innerHTML = state.userName
+    ? `${state.userName}, riordina per <em>priorità</em>`
+    : `Riordina per <em>priorità</em>`;
+  const rd = document.getElementById('reorder-d');
+  if (rd) rd.textContent = state.userName
+    ? `${state.userName}, quale capitolo richiede davvero la tua attenzione oggi?`
+    : 'Non con la logica. Con la sensazione. Quale capitolo richiede davvero la tua attenzione oggi?';
+  const md = document.getElementById('madre-d');
+  if (md) md.textContent = state.userName
+    ? `${state.userName}, se dovessi sceglierne uno soltanto — quale influenza maggiormente tutti gli altri?`
+    : 'Se dovessi sceglierne uno soltanto — quale influenza maggiormente tutti gli altri?';
+}
+
+// ═══════════════════════════════════════════════════════
+// REORDER
+// ═══════════════════════════════════════════════════════
+function goToReorder() {
+  if (!state.reorderOrder.length) {
+    state.reorderOrder = [...state.selected];
+  }
+  updateBookTitleQuestion();
+  renderReorderList();
+  goToScreen('reorder');
+}
+
+function renderReorderList() {
+  const list = document.getElementById('reorder-list');
+  list.innerHTML = '';
+  state.reorderOrder.forEach((id, i) => {
+    const ch = state.chapters.find(c => c.id === id);
+    const data = state.diveData[id] || {};
+    const gap = (data.des || 8) - (data.pres || 5);
+    const item = document.createElement('div');
+    item.className = 'reorder-item' + (i === 0 ? ' top1' : '');
+    item.dataset.id = id;
+    item.draggable = true;
+    item.innerHTML = `
+      <div class="reorder-handle">⠿</div>
+      <div class="reorder-rank">${i + 1}</div>
+      <div class="reorder-emoji">${ch.emoji}</div>
+      <div class="reorder-name">${ch.name}</div>
+      ${i === 0 ? '<div style="font-family:var(--mono);font-size:0.45rem;color:var(--gold);letter-spacing:0.1em;border:1px solid rgba(201,169,110,0.3);border-radius:100px;padding:2px 8px;">PRIORITÀ 1</div>' : ''}
+    `;
+    addDragListeners(item);
+    list.appendChild(item);
+  });
+}
+
+let dragSrc = null;
+function addDragListeners(el) {
+  el.addEventListener('dragstart', e => {
+    dragSrc = el;
+    el.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  el.addEventListener('dragend', () => {
+    el.classList.remove('dragging');
+    document.querySelectorAll('.reorder-item').forEach(i => i.classList.remove('drag-over'));
+    saveReorderOrder();
+    renderReorderList();
+  });
+  el.addEventListener('dragover', e => {
+    e.preventDefault();
+    if (el !== dragSrc) {
+      document.querySelectorAll('.reorder-item').forEach(i => i.classList.remove('drag-over'));
+      el.classList.add('drag-over');
+    }
+  });
+  el.addEventListener('drop', e => {
+    e.preventDefault();
+    if (el !== dragSrc) {
+      const list = document.getElementById('reorder-list');
+      const items = [...list.querySelectorAll('.reorder-item')];
+      const srcIdx = items.indexOf(dragSrc);
+      const tgtIdx = items.indexOf(el);
+      const arr = [...state.reorderOrder];
+      const [moved] = arr.splice(srcIdx, 1);
+      arr.splice(tgtIdx, 0, moved);
+      state.reorderOrder = arr;
+    }
+  });
+
+  // Touch drag support
+  let touchStartY = 0, touchItem = null;
+  el.addEventListener('touchstart', e => {
+    touchStartY = e.touches[0].clientY;
+    touchItem = el;
+    el.style.opacity = '0.6';
+  }, {passive:true});
+  el.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const y = e.touches[0].clientY;
+    const all = [...document.querySelectorAll('.reorder-item')];
+    let target = null;
+    all.forEach(item => {
+      const rect = item.getBoundingClientRect();
+      if (y >= rect.top && y <= rect.bottom && item !== touchItem) target = item;
+    });
+    all.forEach(i => i.classList.remove('drag-over'));
+    if (target) target.classList.add('drag-over');
+  }, {passive:false});
+  el.addEventListener('touchend', e => {
+    el.style.opacity = '';
+    const y = e.changedTouches[0].clientY;
+    const all = [...document.querySelectorAll('.reorder-item')];
+    let target = null;
+    all.forEach(item => {
+      const rect = item.getBoundingClientRect();
+      if (y >= rect.top && y <= rect.bottom && item !== touchItem) target = item;
+    });
+    if (target) {
+      const arr = [...state.reorderOrder];
+      const srcIdx = all.indexOf(touchItem);
+      const tgtIdx = all.indexOf(target);
+      if (srcIdx !== -1 && tgtIdx !== -1) {
+        const [moved] = arr.splice(srcIdx, 1);
+        arr.splice(tgtIdx, 0, moved);
+        state.reorderOrder = arr;
+      }
+    }
+    all.forEach(i => i.classList.remove('drag-over'));
+    saveReorderOrder();
+    renderReorderList();
+  });
+}
+
+function saveReorderOrder() { save(); }
+
+// ═══════════════════════════════════════════════════════
+// MADRE
+// ═══════════════════════════════════════════════════════
+function goToMadre() {
+  renderMadreGrid();
+  goToScreen('madre');
+}
+
+function renderMadreGrid() {
+  const grid = document.getElementById('madre-grid');
+  grid.innerHTML = state.reorderOrder.map(id => {
+    const ch = state.chapters.find(c => c.id === id);
+    return `
+      <div class="madre-option ${state.madre === id ? 'selected' : ''}" onclick="selectMadre('${id}')">
+        <div class="madre-emoji">${ch.emoji}</div>
+        <div class="madre-name">${ch.name}</div>
+        <div class="madre-tag">Capitolo Madre™</div>
+      </div>`;
+  }).join('');
+}
+
+function selectMadre(id) {
+  state.madre = id;
+  save();
+  document.querySelectorAll('.madre-option').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  document.getElementById('btn-madre-next').disabled = false;
+}
+
+// ═══════════════════════════════════════════════════════
+// INSIGHTS
+// ═══════════════════════════════════════════════════════
+function goToInsights() {
+  renderInsights();
+  goToScreen('insights');
+}
+
+function renderInsights() {
+  // Compute scores
+  const scored = state.reorderOrder.map((id, rank) => {
+    const ch = state.chapters.find(c => c.id === id);
+    const data = state.diveData[id] || {};
+    const gap = (data.des || 8) - (data.pres || 5);
+    const imp = data.imp || 5;
+    const pri = data.priority || 5;
+    const emoScore = CRIT_EMOS.has(data.emotion||'') ? 1.5 : (NEU_EMOS.has(data.emotion||'') ? 0.8 : 0.3);
+    const score = imp * 1.4 + pri * 1.2 + gap * 1.1 + (state.reorderOrder.length - rank) * 0.7 + emoScore;
+    return { id, ch, data, gap, imp, pri, score, rank };
+  });
+  scored.sort((a,b) => b.score - a.score);
+
+  const top3 = scored.slice(0, 3);
+  // High potential: high importance, high gap, high rank
+  const highPot = scored.find(s => s.gap >= 3 && s.imp >= 6) || scored[0];
+  // First domino: top reorder + madre
+  const domino = state.madre ? state.chapters.find(c => c.id === state.madre) : top3[0]?.ch;
+  const dominoData = state.diveData[state.madre || top3[0]?.id] || {};
+
+  const html = `
+    <div class="insight-card" style="animation-delay:0s">
+      <div class="insight-card-head">
+        <div class="ins-icon-wrap" style="background:var(--sage-d)">📖</div>
+        <div>
+          <div class="ins-type" style="color:var(--sage)">Top 3 Capitoli</div>
+          <div class="ins-title">I capitoli che richiedono attenzione ora</div>
+        </div>
+      </div>
+      <div class="insight-card-body">
+        <div class="ins-items">
+          ${top3.map((s, i) => `
+            <div class="ins-item">
+              <div class="ins-rank">${i+1}</div>
+              <div class="ins-item-emoji">${s.ch.emoji}</div>
+              <div>${s.ch.name}</div>
+              <div class="ins-badge" style="border-color:rgba(107,143,113,0.3);color:var(--sage);background:var(--sage-d)">Gap +${s.gap}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-card" style="animation-delay:0.1s">
+      <div class="insight-card-head">
+        <div class="ins-icon-wrap" style="background:var(--gold-l)">⭐</div>
+        <div>
+          <div class="ins-type" style="color:var(--gold)">Capitolo Madre™</div>
+          <div class="ins-title">La leva che muove tutto il sistema</div>
+        </div>
+      </div>
+      <div class="insight-card-body">
+        ${domino ? `
+        <div class="ins-highlight">
+          <div class="ins-hl-icon">${domino.emoji}</div>
+          <div>
+            <div class="ins-hl-label">Capitolo Madre™</div>
+            <div class="ins-hl-text">${domino.name} — il capitolo che, se migliorato, attiva un effetto positivo su tutti gli altri.</div>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>
+
+    <div class="insight-card" style="animation-delay:0.2s">
+      <div class="insight-card-head">
+        <div class="ins-icon-wrap" style="background:rgba(201,169,110,0.12)">✨</div>
+        <div>
+          <div class="ins-type" style="color:var(--gold)">Area ad Alto Potenziale Evolutivo</div>
+          <div class="ins-title">Dove si nasconde la leva più potente</div>
+        </div>
+      </div>
+      <div class="insight-card-body">
+        ${highPot ? `
+        <div class="ins-highlight" style="background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.15)">
+          <div class="ins-hl-icon">${highPot.ch.emoji}</div>
+          <div>
+            <div class="ins-hl-label" style="color:rgba(201,169,110,0.6)">Alto Potenziale</div>
+            <div class="ins-hl-text">${highPot.ch.name} — importanza alta (${highPot.imp}/10) con un gap di ${highPot.gap} punti. Qui si nasconde spazio evolutivo reale.</div>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>
+
+    <div class="insight-card" style="animation-delay:0.3s">
+      <div class="insight-card-head">
+        <div class="ins-icon-wrap" style="background:rgba(26,74,122,0.1)">🎯</div>
+        <div>
+          <div class="ins-type" style="color:#1a4a7a">First Domino Candidate™</div>
+          <div class="ins-title">Da dove partire</div>
+        </div>
+      </div>
+      <div class="insight-card-body">
+        ${domino ? `
+        <div class="domino-result">
+          <div class="domino-ch"><span class="domino-emoji">${domino.emoji}</span><span class="domino-name" style="color:#1a4a7a;font-size:0.95rem;font-weight:600">${domino.name}</span></div>
+          <div class="domino-action">${dominoData.action || 'Prima azione: dedica 10 minuti a questo capitolo domani mattina.'}</div>
+        </div>` : ''}
+      </div>
+    </div>
+  `;
+  document.getElementById('insights-content').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// REALM
+// ═══════════════════════════════════════════════════════
+function goToRealm() {
+  renderRealm();
+  goToScreen('realm');
+}
+
+function renderRealm() {
+  const top3ids = state.reorderOrder.slice(0, 3);
+  const colorSets = [
+    { border:'rgba(107,143,113,0.3)', bg:'var(--sage-d)', text:'var(--sage)', tag:'sage' },
+    { border:'rgba(201,169,110,0.3)', bg:'var(--gold-l)', text:'var(--gold)', tag:'gold' },
+    { border:'rgba(26,74,122,0.2)',   bg:'rgba(26,74,122,0.07)', text:'#1a4a7a', tag:'blue' },
+  ];
+
+  const html = top3ids.map((id, i) => {
+    const ch = state.chapters.find(c => c.id === id);
+    const realms = (REALM_MAP[id] || ['Crescita','Identità','Abitudini','Consapevolezza']).slice(0, 6);
+    const cs = colorSets[i] || colorSets[0];
+    const rank = i === 0 ? 'Priorità 1' : i === 1 ? 'Priorità 2' : 'Priorità 3';
+
+    return `
+      <div class="realm-section">
+        <div class="realm-ch-header">
+          <div class="realm-ch-emoji">${ch.emoji}</div>
+          <div class="realm-ch-name">${ch.name}</div>
+          <div class="realm-ch-tag" style="border-color:${cs.border};color:${cs.text};background:${cs.bg}">${rank}</div>
+        </div>
+        <div class="realm-connections">
+          <div class="realm-flow">
+            ${realms.map((r, ri) => `
+              ${ri > 0 ? '<span class="realm-arrow">→</span>' : ''}
+              <div class="realm-tag" style="border-color:${cs.border};color:${cs.text};background:${cs.bg}">${r}</div>
+            `).join('')}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('realm-content').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// RESULT
+// ═══════════════════════════════════════════════════════
+function goToResult() {
+  renderResult();
+  goToScreen('result');
+  // Personalize result title
+  const rh = document.getElementById('result-h');
+  if (rh && state.userName) rh.innerHTML = `Il Libro di ${state.userName} <em>Oggi</em>`;
+}
+
+function renderResult() {
+  const scored = state.reorderOrder.map((id, rank) => {
+    const ch = state.chapters.find(c => c.id === id);
+    const data = state.diveData[id] || {};
+    const gap = (data.des || 8) - (data.pres || 5);
+    const imp = data.imp || 5;
+    const pri = data.priority || 5;
+    return { id, ch, data, gap, imp, pri, rank };
+  });
+  const top3 = scored.slice(0, 3);
+  const madreCh = state.madre ? state.chapters.find(c => c.id === state.madre) : top3[0]?.ch;
+  const highPot = scored.find(s => s.gap >= 3 && s.imp >= 6) || scored.find(s => s.gap >= 3) || scored[0];
+  const domino = madreCh;
+  const dominoData = state.diveData[state.madre || (top3[0]?.id)] || {};
+
+  const html = `
+    <div class="result-section">
+      <div class="result-card">
+        <div class="result-card-head">
+          <div class="result-card-icon" style="background:rgba(107,143,113,0.12)">📖</div>
+          <div>
+            <div class="result-card-label">Top 3 Capitoli</div>
+            <div class="result-card-title">I tuoi capitoli prioritari</div>
+          </div>
+        </div>
+        <div class="result-card-body">
+          <div class="result-top3">
+            ${top3.map((s, i) => `
+              <div class="result-top3-item">
+                <div class="result-rank">${i+1}</div>
+                <div class="result-emoji">${s.ch.emoji}</div>
+                <div class="result-name">${s.ch.name}</div>
+                <div class="result-gap-pill">+${s.gap} gap</div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-section">
+      <div class="result-card" style="border-color:rgba(201,169,110,0.25)">
+        <div class="result-card-head">
+          <div class="result-card-icon" style="background:var(--gold-l)">⭐</div>
+          <div>
+            <div class="result-card-label" style="color:rgba(201,169,110,0.6)">Capitolo Madre™</div>
+            <div class="result-card-title" style="color:var(--gold)">La tua leva principale</div>
+          </div>
+        </div>
+        <div class="result-card-body">
+          ${madreCh ? `
+          <div class="madre-result">
+            <div class="madre-result-emoji">${madreCh.emoji}</div>
+            <div>
+              <div class="madre-result-name">${madreCh.name}</div>
+              <div class="madre-result-sub">Influenza tutti gli altri capitoli</div>
+            </div>
+          </div>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <div class="result-section">
+      <div class="result-card" style="border-color:rgba(201,169,110,0.2)">
+        <div class="result-card-head">
+          <div class="result-card-icon" style="background:rgba(201,169,110,0.1)">✨</div>
+          <div>
+            <div class="result-card-label" style="color:rgba(201,169,110,0.6)">Alto Potenziale Evolutivo</div>
+            <div class="result-card-title">Dove si nasconde la leva</div>
+          </div>
+        </div>
+        <div class="result-card-body">
+          ${highPot ? `
+          <div style="display:flex;gap:10px;align-items:center">
+            <span style="font-size:1.5rem">${highPot.ch.emoji}</span>
+            <div>
+              <div style="font-size:0.9rem;color:rgba(255,255,255,0.75);font-weight:500">${highPot.ch.name}</div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.35);margin-top:2px">Gap evolutivo: +${highPot.gap} · Grande opportunità</div>
+            </div>
+          </div>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <div class="result-section">
+      <div class="result-card" style="background:rgba(107,143,113,0.08);border-color:rgba(107,143,113,0.2)">
+        <div class="result-card-head">
+          <div class="result-card-icon" style="background:rgba(107,143,113,0.15)">🎯</div>
+          <div>
+            <div class="result-card-label" style="color:rgba(107,143,113,0.7)">First Domino™ + Prima Azione</div>
+            <div class="result-card-title" style="color:var(--sage)">Da dove iniziare</div>
+          </div>
+        </div>
+        <div class="result-card-body">
+          ${domino ? `
+          <div class="result-domino">
+            <div class="domino-ch">
+              <span class="domino-emoji">${domino.emoji}</span>
+              <span class="domino-name">${domino.name}</span>
+            </div>
+            <div class="domino-action">${dominoData.action || 'La tua prima azione: inizia con un piccolo passo verso questo capitolo nelle prossime 72 ore.'}</div>
+          </div>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <div class="result-section">
+      <div class="result-card">
+        <div class="result-card-head">
+          <div class="result-card-icon" style="background:rgba(107,143,113,0.1)">🕸️</div>
+          <div>
+            <div class="result-card-label">Realm™ Principali</div>
+            <div class="result-card-title">Gli ecosistemi connessi</div>
+          </div>
+        </div>
+        <div class="result-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            ${[...new Set(top3.flatMap(s => (REALM_MAP[s.id] || []).slice(0,3)))].slice(0,8).map(r =>
+              `<div style="background:rgba(107,143,113,0.12);border:1px solid rgba(107,143,113,0.25);border-radius:8px;padding:5px 12px;font-size:0.75rem;color:var(--sage)">${r}</div>`
+            ).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('result-content').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// IDENTITY ENGINE
+// ═══════════════════════════════════════════════════════
+const PATTERN_MAP = {
+  recovery:     { name: 'Recovery-Seeking', ids: ['corpo','energia','sonno','movimento','nutrizione'], desc: 'orientata al recupero e alla rigenerazione delle proprie risorse vitali' },
+  purpose:      { name: 'Purpose-Driven',   ids: ['significato','crescita','spirit','mente'], desc: 'guidata dalla ricerca di significato profondo e direzione evolutiva' },
+  growth:       { name: 'Growth-Oriented',  ids: ['crescita','mente','significato','spirit'], desc: 'orientata alla crescita continua e all\'espansione della propria consapevolezza' },
+  performance:  { name: 'Performance-Oriented', ids: ['lavoro','finanze','movimento','mente'], desc: 'focalizzata sulla performance, sulla produttività e sul risultato' },
+  balance:      { name: 'Balance-Seeking',  ids: ['tempo','ambiente','emozioni','relazioni'], desc: 'in ricerca di equilibrio tra le diverse aree della propria vita' },
+  relationship: { name: 'Relationship-Centered', ids: ['relazioni','emozioni','tempo','spirit'], desc: 'che trae energia e significato dalle connessioni con gli altri' },
+  creative:     { name: 'Creative-Expansion', ids: ['creativita','significato','spiritu','crescita'], desc: 'in una fase di espansione creativa e ricerca di nuove possibilità' },
+  stability:    { name: 'Stability-Seeking', ids: ['finanze','ambiente','lavoro','tempo'], desc: 'in un momento in cui la stabilità e la sicurezza sono prioritarie' },
+};
+
+const STRONG_PHRASES = {
+  corpo:      'Hai un legame consapevole con il tuo corpo e le sue segnali.',
+  energia:    'Sai riconoscere i momenti in cui sei al massimo — e quelli in cui devi fermarti.',
+  sonno:      'Hai consapevolezza del potere rigenerante del riposo.',
+  movimento:  'Il movimento è già parte della tua identità — anche se non sempre della tua routine.',
+  nutrizione: 'Hai una relazione riflessiva con ciò che nutri il tuo corpo.',
+  mente:      'La tua mente è una risorsa che sai valorizzare.',
+  emozioni:   'Hai una sensibilità emotiva evoluta — una risorsa, non un limite.',
+  relazioni:  'Le relazioni sono un capitolo che curi e a cui tieni profondamente.',
+  lavoro:     'Porti impegno e serietà in ciò che fai professionalmente.',
+  finanze:    'Hai consapevolezza del ruolo che le risorse economiche giocano nella tua libertà.',
+  tempo:      'Sai quanto valga il tuo tempo — anche quando fai fatica a difenderlo.',
+  crescita:   'La crescita è un valore autentico per te, non una parola.',
+  significato:'Sei qualcuno che cerca profondità, non solo risultati.',
+  ambiente:   'L\'ambiente in cui vivi influenza la tua qualità di vita — e lo sai.',
+  spirit:     'Hai una vita interiore attiva e una ricerca di senso genuina.',
+};
+
+const BLIND_SPOTS = {
+  corpo:      'Potresti sottovalutare quanto il corpo — non solo la mente — influenzi umore, energia e capacità decisionale.',
+  energia:    'Potresti confondere la stanchezza cronica con la tua "normalità", perdendo il riferimento del tuo potenziale reale.',
+  sonno:      'Potresti sottovalutare quanto il recupero notturno influenzi energia, lucidità e qualità delle tue scelte quotidiane.',
+  movimento:  'Potresti rimandare il movimento aspettando "il momento giusto" — che raramente arriva da solo.',
+  nutrizione: 'Potresti trattare la nutrizione come un fatto puramente pratico, dimenticandone l\'impatto sull\'umore e sulla concentrazione.',
+  mente:      'Potresti sovraccarica la mente pensando che "pensare di più" risolva ciò che invece richiede pausa e distanza.',
+  emozioni:   'Potresti tendere a razionalizzare le emozioni invece di lasciarle essere — e quindi processarle davvero.',
+  relazioni:  'Potresti investire nelle relazioni degli altri prima di considerare cosa ti nutre realmente nelle connessioni.',
+  lavoro:     'Potresti usare il lavoro come âncora di identità, rendendo più difficile distinguere chi sei da ciò che fai.',
+  finanze:    'Potresti portare tensioni economiche silenziosamente, senza tradurle in azioni concrete e piccole.',
+  tempo:      'Potresti sapere cosa vorresti fare ma non trovare il modo di proteggere davvero quel tempo.',
+  crescita:   'Potresti consumare molti input — libri, corsi, contenuti — senza lasciare spazio all\'integrazione e alla pratica.',
+  significato:'Potresti avere chiarezza sul perché ma faticare a tradurlo nelle scelte quotidiane.',
+  ambiente:   'Potresti sottovalutare quanto l\'ambiente fisico in cui operi plasmi comportamenti e stati d\'animo.',
+  spirit:     'Potresti avere una vita spirituale ricca ma fatica a radicarne i valori nelle scelte pratiche del quotidiano.',
+};
+
+function detectPattern(selectedIds) {
+  let maxScore = -1;
+  let dominant = PATTERN_MAP.balance;
+  for (const [key, pattern] of Object.entries(PATTERN_MAP)) {
+    const score = pattern.ids.filter(id => selectedIds.includes(id)).length;
+    if (score > maxScore) { maxScore = score; dominant = pattern; }
+  }
+  return dominant;
+}
+
+function buildIdentikit(top3, pattern, madreCh) {
+  const names = top3.map(s => s.ch.name.toLowerCase());
+  const motherName = madreCh ? madreCh.name.toLowerCase() : names[0];
+  const phase = ['riallineare','riconnettere a','rafforzare','ritrovare'][Math.floor(Math.random()*4)];
+  return `Dal tuo Libro emerge una persona ${pattern.desc}. I capitoli ${names.slice(0,2).join(' e ')} emergono con la maggiore intensità, rivelando un sistema che sente il bisogno di ${phase} ${motherName} come leva primaria verso una qualità di vita più coerente con ciò che conta davvero.`;
+}
+
+function buildWeeks(dominoData, madreCh, top3) {
+  const domName = madreCh ? madreCh.name : (top3[0]?.ch?.name || 'il tuo capitolo prioritario');
+  const action = dominoData?.action || 'inizia con un piccolo passo concreto';
+  return [
+    { label: 'Settimana 1', title: 'Osservazione', text: `Osserva senza giudicare come si manifesta ${domName} nella tua settimana. Non cambiare nulla — registra.` },
+    { label: 'Settimana 2', title: 'Prima azione', text: action.length > 8 ? action : `Introduci un'azione minima legata a ${domName}. Non la migliore — la più possibile.` },
+    { label: 'Settimana 3', title: 'Consolidamento', text: `Consolida l'azione della settimana scorsa. Ripetila almeno 4 volte. Nota cosa cambia nell'energia e nel tono generale.` },
+    { label: 'Settimana 4', title: 'Review', text: `Guardati indietro: cosa è cambiato? Cosa hai scoperto? Decidi se espandere questa leva o introdurne una nuova.` },
+  ];
+}
+
+function goToIdentity() {
+  renderIdentity();
+  goToScreen('identity');
+}
+
+function renderIdentity() {
+  const scored = state.reorderOrder.map((id, rank) => {
+    const ch = state.chapters.find(c => c.id === id);
+    const data = state.diveData[id] || {};
+    const gap = (data.des || 8) - (data.pres || 5);
+    const imp = data.imp || 5;
+    const pri = data.priority || 5;
+    const emoScore = CRIT_EMOS.has(data.emotion||'') ? 1.5 : (NEU_EMOS.has(data.emotion||'') ? 0.8 : 0.3);
+    const score = imp * 1.4 + pri * 1.2 + gap * 1.1 + (state.reorderOrder.length - rank) * 0.7 + emoScore;
+    return { id, ch, data, gap, imp, pri, score, rank };
+  });
+  scored.sort((a,b) => b.score - a.score);
+
+  const top3 = scored.slice(0, 3);
+  const madreCh = state.madre ? state.chapters.find(c => c.id === state.madre) : top3[0]?.ch;
+  const dominoData = state.diveData[state.madre || top3[0]?.id] || {};
+
+  // Pattern
+  const pattern = detectPattern(state.selected);
+
+  // Punti forti: alto presente + alta importanza
+  const forti = scored
+    .filter(s => (s.data.pres || 5) >= 6 && s.imp >= 6)
+    .slice(0, 3);
+  const fortiItems = forti.length >= 2 ? forti : scored.slice(0, 3);
+
+  // Aree potenziale: alta importanza + basso presente + alto desiderato
+  const potenziali = scored
+    .filter(s => s.imp >= 6 && (s.data.pres || 5) <= 5 && s.gap >= 3)
+    .slice(0, 3);
+  const potenzialiItems = potenziali.length >= 1 ? potenziali : scored.filter(s => s.gap >= 2).slice(0, 3);
+
+  // Punti ciechi: capitoli con gap alto ma non in top3
+  const allSorted = [...scored].sort((a,b) => b.gap - a.gap);
+  const topIds = new Set(top3.map(s => s.id));
+  const ciechiPool = allSorted.filter(s => !topIds.has(s.id) && s.gap >= 2);
+  const puntiCiechi = ciechiPool.slice(0, 2);
+
+  // Roadmap
+  const weeks = buildWeeks(dominoData, madreCh, top3);
+
+  // First Domino narrative
+  const dominoCh = madreCh;
+  const dominoRealms = dominoCh ? (REALM_MAP[dominoCh.id] || []).slice(0,3).join(', ') : '';
+  const dominoWhy = dominoCh
+    ? `${dominoCh.name} emerge come il punto di leva più coerente con i tuoi valori, il tuo gap evolutivo e i Realm collegati (${dominoRealms}). Agire qui genera effetti positivi sull'intero sistema.`
+    : 'Il tuo First Domino™ emerge dall\'incrocio tra importanza, gap e scelta interiore.';
+
+  const html = `
+    <!-- Hero: Identikit + Pattern -->
+    <div class="id-hero">
+      <div class="id-hero-eyebrow">Human Mirror™ · Identity Engine</div>
+      <div class="id-identikit">${buildIdentikit(top3, pattern, madreCh)}</div>
+      <div class="id-pattern-badge">
+        <div class="id-pattern-dot"></div>
+        <div class="id-pattern-name">${pattern.name}</div>
+      </div>
+    </div>
+
+    <!-- Punti forti -->
+    <div class="id-card" style="animation-delay:0.05s">
+      <div class="id-card-head">
+        <div class="id-card-icon" style="background:var(--sage-d)">💪</div>
+        <div>
+          <div class="id-card-type" style="color:var(--sage)">Punti Forti</div>
+          <div class="id-card-title">Dove il tuo sistema è già solido</div>
+        </div>
+      </div>
+      <div class="id-card-body">
+        <div class="id-list">
+          ${fortiItems.map(s => `
+            <div class="id-list-item">
+              <div class="id-list-bullet" style="color:var(--sage)">◉</div>
+              <div><strong>${s.ch.emoji} ${s.ch.name}</strong> — ${STRONG_PHRASES[s.id] || 'Un capitolo dove emerge già forza e consapevolezza.'}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Aree ad alto potenziale -->
+    <div class="id-card" style="animation-delay:0.1s">
+      <div class="id-card-head">
+        <div class="id-card-icon" style="background:var(--gold-l)">✨</div>
+        <div>
+          <div class="id-card-type" style="color:var(--gold)">Aree ad Alto Potenziale Evolutivo</div>
+          <div class="id-card-title">Dove si nasconde la leva più potente</div>
+        </div>
+      </div>
+      <div class="id-card-body">
+        <div class="id-list">
+          ${potenzialiItems.map(s => `
+            <div class="id-list-item">
+              <div class="id-list-bullet" style="color:var(--gold)">◈</div>
+              <div><strong>${s.ch.emoji} ${s.ch.name}</strong> — alta importanza (${s.imp}/10) con un gap evolutivo di +${s.gap}. Qui si apre uno spazio di trasformazione reale.</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Possibili punti ciechi -->
+    ${puntiCiechi.length > 0 ? `
+    <div class="id-card" style="animation-delay:0.15s">
+      <div class="id-card-head">
+        <div class="id-card-icon" style="background:rgba(26,26,26,0.05)">🌫️</div>
+        <div>
+          <div class="id-card-type" style="color:var(--ink3)">Possibili Punti Ciechi</div>
+          <div class="id-card-title">Aree che potrebbero richiedere attenzione</div>
+        </div>
+      </div>
+      <div class="id-card-body">
+        ${puntiCiechi.map(s =>
+          `<div class="id-punto-cieco">${BLIND_SPOTS[s.id] || `Potresti sottovalutare il peso che ${s.ch.name} ha sull'intero sistema.`}</div>`
+        ).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- Capitolo Madre -->
+    ${madreCh ? `
+    <div class="id-card" style="animation-delay:0.2s">
+      <div class="id-card-head">
+        <div class="id-card-icon" style="background:var(--gold-l)">⭐</div>
+        <div>
+          <div class="id-card-type" style="color:var(--gold)">Capitolo Madre™</div>
+          <div class="id-card-title">La leva che muove tutto il sistema</div>
+        </div>
+      </div>
+      <div class="id-card-body">
+        <div class="id-domino-box">
+          <div class="id-domino-emoji">${madreCh.emoji}</div>
+          <div>
+            <div class="id-domino-label">Capitolo Madre™</div>
+            <div class="id-domino-name">${madreCh.name}</div>
+            <div class="id-domino-why">Questo capitolo emerge come leva sistemica: migliorarlo genera effetti positivi a cascata sugli altri capitoli del tuo libro.</div>
+          </div>
+        </div>
+      </div>
+    </div>` : ''}
+
+    <!-- First Domino -->
+    ${dominoCh ? `
+    <div class="id-card" style="animation-delay:0.25s">
+      <div class="id-card-head">
+        <div class="id-card-icon" style="background:rgba(26,74,122,0.08)">🎯</div>
+        <div>
+          <div class="id-card-type" style="color:#1a4a7a">First Domino Candidate™</div>
+          <div class="id-card-title">Da dove conviene partire</div>
+        </div>
+      </div>
+      <div class="id-card-body">
+        <div class="id-domino-box">
+          <div class="id-domino-emoji">${dominoCh.emoji}</div>
+          <div>
+            <div class="id-domino-label" style="color:rgba(107,143,113,0.6)">First Domino™</div>
+            <div class="id-domino-name">${dominoCh.name}</div>
+            <div class="id-domino-why">${dominoWhy}</div>
+          </div>
+        </div>
+        ${dominoData.action ? `<div style="margin-top:0.85rem;padding:0.75rem;background:rgba(107,143,113,0.06);border:1px solid rgba(107,143,113,0.15);border-radius:10px;font-size:0.8rem;color:var(--ink2);font-style:italic;line-height:1.6">Prima azione: ${dominoData.action}</div>` : ''}
+      </div>
+    </div>` : ''}
+
+    <!-- Roadmap 30 giorni -->
+    <div class="id-card" style="animation-delay:0.3s">
+      <div class="id-card-head">
+        <div class="id-card-icon" style="background:var(--sage-d)">📅</div>
+        <div>
+          <div class="id-card-type" style="color:var(--sage)">Roadmap 30 Giorni</div>
+          <div class="id-card-title">Il tuo piano di evoluzione</div>
+        </div>
+      </div>
+      <div class="id-card-body">
+        <div class="id-roadmap">
+          ${weeks.map(w => `
+            <div class="id-week">
+              <div class="id-week-left">
+                <div class="id-week-num">${w.label}</div>
+                <div class="id-week-line"></div>
+              </div>
+              <div>
+                <div class="id-week-title">${w.title}</div>
+                <div class="id-week-text">${w.text}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('identity-content').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// HUMAN MIRROR REPORT™
+// ═══════════════════════════════════════════════════════
+function goToReport() {
+  renderReport();
+  goToScreen('report');
+}
+
+function drawRadar(canvasId, labels, presentVals, desiredVals) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+
+  // Robust size: retry up to 3 times if parent has no width yet
+  function _draw() {
+    const parent = canvas.parentElement;
+    const parentW = parent ? parent.offsetWidth : 0;
+    const size = Math.max(260, Math.min(360, parentW > 40 ? parentW - 40 : 300));
+
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.scale(dpr, dpr);
+
+    const cx = size / 2, cy = size / 2;
+    const r = size * 0.34;
+    const n = labels.length;
+    if (n < 2) return;
+    const angleStep = (Math.PI * 2) / n;
+    const startAngle = -Math.PI / 2;
+
+    function getXY(i, val, maxVal) {
+      const angle = startAngle + i * angleStep;
+      const dist = r * (val / maxVal);
+      return [cx + dist * Math.cos(angle), cy + dist * Math.sin(angle)];
+    }
+
+    // Grid rings
+    [0.25, 0.5, 0.75, 1].forEach(f => {
+      ctx.beginPath();
+      for (let i = 0; i < n; i++) {
+        const [x, y] = getXY(i, f * 10, 10);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = f === 1 ? 'rgba(14,21,32,0.14)' : 'rgba(14,21,32,0.07)';
+      ctx.lineWidth = f === 1 ? 1.2 : 0.8;
+      ctx.stroke();
+    });
+
+    // Axes
+    for (let i = 0; i < n; i++) {
+      const [x, y] = getXY(i, 10, 10);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(x, y);
+      ctx.strokeStyle = 'rgba(14,21,32,0.07)';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    }
+
+    function drawPolygon(vals, fillColor, strokeColor, lw) {
+      ctx.beginPath();
+      vals.forEach((v, i) => {
+        const [x, y] = getXY(i, Math.min(Math.max(v, 0), 10), 10);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.fillStyle = fillColor;
+      ctx.fill();
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = lw;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+    }
+
+    // Desired (sage green) — behind
+    drawPolygon(desiredVals, 'rgba(107,143,113,0.15)', '#6b8f71', 2.2);
+    // Present (navy) — in front
+    drawPolygon(presentVals, 'rgba(12,22,32,0.12)', '#0c1620', 2.2);
+
+    // Dots
+    [[presentVals, '#0c1620'], [desiredVals, '#6b8f71']].forEach(([vals, col]) => {
+      vals.forEach((v, i) => {
+        const [x, y] = getXY(i, Math.min(Math.max(v, 0), 10), 10);
+        ctx.beginPath();
+        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = col;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
+    });
+
+    // Labels — bold, dark, good contrast
+    const fontSize = Math.max(10, Math.round(size * 0.034));
+    ctx.font = `600 ${fontSize}px "DM Sans", system-ui, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const labelR = r + size * 0.13;
+    labels.forEach((lbl, i) => {
+      const angle = startAngle + i * angleStep;
+      const lx = cx + labelR * Math.cos(angle);
+      const ly = cy + labelR * Math.sin(angle);
+      const short = lbl.length > 10 ? lbl.substring(0, 9) + '…' : lbl;
+      // Shadow for legibility
+      ctx.shadowColor = 'rgba(248,246,241,0.9)';
+      ctx.shadowBlur = 4;
+      ctx.fillStyle = 'rgba(14,21,32,0.75)';
+      ctx.fillText(short, lx, ly);
+      ctx.shadowBlur = 0;
+    });
+  }
+
+  // Try immediately, then retry if parent was not laid out
+  _draw();
+  if (canvas.width === 0 || parseInt(canvas.style.width) < 100) {
+    setTimeout(_draw, 80);
+    setTimeout(_draw, 250);
+  }
+}
+
+function renderReport() {
+  // ── Compute data ──
+  const scored = state.reorderOrder.map((id, rank) => {
+    const ch = state.chapters.find(c => c.id === id);
+    const data = state.diveData[id] || {};
+    const gap = (data.des || 8) - (data.pres || 5);
+    const imp = data.imp || 5;
+    const pri = data.priority || 5;
+    const emotion = data.emotion || '';
+    const emoScore = CRIT_EMOS.has(emotion) ? 1.5 : (NEU_EMOS.has(emotion) ? 0.8 : 0.3);
+    const hasWhy = data.why && data.why.trim().length > 0 ? 1 : 0;
+    const score = imp * 1.4 + pri * 1.2 + gap * 1.1 + (state.reorderOrder.length - rank) * 0.7 + emoScore + hasWhy;
+    return { id, ch, data, gap, imp, pri, score, rank };
+  });
+  scored.sort((a, b) => b.score - a.score);
+
+  const top3 = scored.slice(0, 3);
+  const madreCh = state.madre ? state.chapters.find(c => c.id === state.madre) : top3[0]?.ch;
+  const dominoData = state.diveData[state.madre || top3[0]?.id] || {};
+  const highPot = scored.find(s => s.gap >= 3 && s.imp >= 6) || scored[0];
+  const pattern = detectPattern(state.selected);
+
+  // Emotion data
+  const allEmotions = state.reorderOrder.map(id => state.diveData[id]?.emotion || '').filter(Boolean);
+  const emoPos = allEmotions.filter(e => !CRIT_EMOS.has(e) && !NEU_EMOS.has(e)).length;
+  const emoNeu = allEmotions.filter(e => NEU_EMOS.has(e)).length;
+  const emoCrit = allEmotions.filter(e => CRIT_EMOS.has(e)).length;
+
+  // Book title
+  const userBookTitle = state.bookTitle || '';
+  const suggestedTitle = suggestBookTitle(scored, allEmotions);
+
+  // Narrative
+  const narrativeText = generateNarrative(scored, madreCh, pattern, userBookTitle);
+  const evDirection = generateEvolutionDirection(scored, pattern, madreCh);
+
+  // Roadmap weeks
+  const dominoName = madreCh ? madreCh.name : (top3[0]?.ch?.name || 'il tuo capitolo prioritario');
+  const userAction = dominoData.action || `Dedica 10 minuti a ${dominoName}`;
+  const weeks = [
+    { n: 'W1', label: 'Settimana 1', title: 'Osservazione', text: `Osserva senza giudicare come si manifesta ${dominoName} nella tua quotidianità. Non cambiare ancora — registra.`, goal: 'Consapevolezza' },
+    { n: 'W2', label: 'Settimana 2', title: 'Prima Azione', text: userAction, goal: 'Primo passo' },
+    { n: 'W3', label: 'Settimana 3', title: 'Consolidamento', text: `Ripeti l'azione della settimana scorsa almeno 4 volte. Nota cosa cambia nell'energia e nel tono generale.`, goal: 'Abitudine' },
+    { n: 'W4', label: 'Settimana 4', title: 'Review', text: `Guardati indietro: cosa è cambiato? Cosa hai scoperto? Decidi se espandere questa leva o introdurne una nuova.`, goal: 'Revisione' },
+  ];
+
+  const identikitText = buildIdentikit(top3, pattern, madreCh);
+  const patternDesc = {
+    'Recovery-Seeking':      'Emerge una priorità verso il recupero e la rigenerazione delle risorse vitali. Identificato dalla frequenza di capitoli legati a energia, sonno e corpo.',
+    'Purpose-Driven':        'Emerge una ricerca di significato profondo e direzione evolutiva. Identificato dalla presenza di capitoli come crescita, significato e spiritualità.',
+    'Growth-Oriented':       'Emerge un orientamento verso la crescita continua e l\'espansione della consapevolezza. Identificato dall\'intensità dei capitoli di sviluppo personale.',
+    'Performance-Oriented':  'Emerge una focalizzazione sulla performance e sul risultato. Identificato dalla dominanza di capitoli come lavoro, finanze e mente.',
+    'Balance-Seeking':       'Emerge una ricerca di equilibrio tra le aree della vita. Identificato dalla distribuzione dei capitoli tra tempo, ambiente ed emozioni.',
+    'Relationship-Centered': 'Emerge un orientamento verso le connessioni come fonte primaria di energia. Identificato dalla priorità delle relazioni e delle emozioni.',
+    'Creative-Expansion':    'Emerge una fase di espansione creativa e ricerca di nuove possibilità. Identificato dall\'attivazione di capitoli legati alla creatività.',
+    'Stability-Seeking':     'Emerge un bisogno di stabilità come fondamento. Identificato dalla presenza forte di finanze, ambiente e lavoro.',
+  }[pattern.name] || 'Pattern identificato dall\'insieme dei capitoli selezionati e dalla loro priorità relativa.';
+
+  const radarIds = state.reorderOrder.slice(0, Math.min(8, state.reorderOrder.length));
+  const radarLabels = radarIds.map(id => state.chapters.find(c => c.id === id)?.name || id);
+  const radarPresent = radarIds.map(id => state.diveData[id]?.pres ?? 5);
+  const radarDesired = radarIds.map(id => state.diveData[id]?.des ?? 8);
+
+  function emoBadgeStyle(emo) {
+    if (!emo) return 'border-color:var(--border2);color:var(--ink3)';
+    if (CRIT_EMOS.has(emo)) return 'border-color:rgba(175,60,60,0.3);color:#b03c3c;background:rgba(175,60,60,0.06)';
+    if (NEU_EMOS.has(emo))  return 'border-color:rgba(201,169,110,0.3);color:var(--gold);background:var(--gold-l)';
+    return 'border-color:rgba(107,143,113,0.3);color:var(--sage);background:var(--sage-l)';
+  }
+
+  // ── Build action roadmap (all chapters with actions, in priority order) ──
+  const actionsWithData = state.reorderOrder
+    .map(id => ({ ch: state.chapters.find(c => c.id === id), data: state.diveData[id] || {} }))
+    .filter(x => x.ch && x.data.action);
+
+  // ── 7-day checklist: top actions ──
+  const sevenDayActions = actionsWithData.slice(0, 5);
+
+  // ── Commitment hero ──
+  const commitCh = madreCh || top3[0]?.ch;
+  const commitData = state.diveData[commitCh?.id] || {};
+  const commitAction = commitData.action || dominoData.action || `Dedicare 10 minuti a ${commitCh?.name || 'questo capitolo'} ogni giorno`;
+
+  const today = new Date().toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
+  const nameStr = state.userName || '';
+
+  // ═══ PAGINA 1 — COPERTINA ═══
+  const coverHtml = `
+  <div class="pdf-cover pdf-page" id="pdf-p1" style="display:flex">
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;height:100%">
+      <div class="pdf-cover-eyebrow">Human Mirror™ · Life Chapters™</div>
+      <div style="flex:1">
+        <div class="pdf-cover-title">Il Libro di<br><em>${nameStr || 'Te'}</em></div>
+        <div class="pdf-cover-sub">Human Mirror™ Report — ${today}</div>
+        ${(userBookTitle || suggestedTitle) ? `<div class="pdf-cover-booktitle">"${userBookTitle || suggestedTitle}"</div>` : ''}
+      </div>
+      <div class="pdf-cover-meta-row">
+        <div class="pdf-cover-meta-item"><div class="pdf-cover-meta-label">Capitoli</div><div class="pdf-cover-meta-val">${state.reorderOrder.length} capitoli</div></div>
+        <div class="pdf-cover-meta-item"><div class="pdf-cover-meta-label">Pattern</div><div class="pdf-cover-meta-val">${pattern.name}</div></div>
+        ${nameStr ? `<div class="pdf-cover-meta-item"><div class="pdf-cover-meta-label">Nome</div><div class="pdf-cover-meta-val">${nameStr}</div></div>` : ''}
+      </div>
+      <div class="pdf-cover-closing">Human Mirror™ · Osserva · Comprendi · Evolvi</div>
+    </div>
+  </div>`;
+
+  // ═══ PAGINA 2 — EXECUTIVE SUMMARY ═══
+  const p2Html = `
+  <div class="pdf-page" id="pdf-p2">
+    <div class="pdf-page-header"><div class="pdf-page-brand">Human Mirror™ Report</div><div class="pdf-page-num">Executive Summary · P.2</div></div>
+    <div class="rpt-section">
+      <div class="rpt-section-label">Book Title™</div>
+      <div class="rpt-bt-row">
+        ${userBookTitle ? `<div class="rpt-bt-cell"><div class="rpt-bt-cell-label">Titolo inserito</div><div class="rpt-bt-cell-val">"${userBookTitle}"</div></div>` : ''}
+        <div class="rpt-bt-cell suggested"><div class="rpt-bt-cell-label">Titolo suggerito</div><div class="rpt-bt-cell-val">"${suggestedTitle}"</div></div>
+      </div>
+    </div>
+    <div class="rpt-section">
+      <div class="rpt-section-label">La Storia che Emerge</div>
+      <div class="rpt-narrative"><div class="rpt-narrative-text">${narrativeText}</div></div>
+    </div>
+    <div class="rpt-section">
+      <div class="rpt-section-label">Evolution Direction™</div>
+      <div class="rpt-evdir"><div class="rpt-evdir-label">Evolution Direction™</div><div class="rpt-evdir-text">${evDirection}</div></div>
+    </div>
+    <div class="rpt-section">
+      <div class="rpt-section-label">Pattern Dominante™</div>
+      <div class="rpt-pattern"><div class="rpt-pattern-name">◉ ${pattern.name}</div><div class="rpt-pattern-why">${patternDesc}</div></div>
+    </div>
+  </div>`;
+
+  // ═══ PAGINA 3 — LIFE LANDSCAPE ═══
+  const p3Html = `
+  <div class="pdf-page" id="pdf-p3">
+    <div class="pdf-page-header"><div class="pdf-page-brand">Human Mirror™ Report</div><div class="pdf-page-num">Life Landscape™ · P.3</div></div>
+    <div class="rpt-section">
+      <div class="rpt-section-label">Human Mirror Radar™</div>
+      <div class="rpt-radar-wrap">
+        <div class="rpt-radar-title">La tua mappa attuale e la direzione desiderata.</div>
+        <div class="rpt-radar-sub">Overlay Present™ vs Desired Chapter™</div>
+        <canvas id="radarCanvas"></canvas>
+        <div class="rpt-radar-legend">
+          <div class="rpt-legend-item"><div class="rpt-legend-dot" style="background:rgba(12,22,32,0.7)"></div>Present™</div>
+          <div class="rpt-legend-item"><div class="rpt-legend-dot" style="background:rgba(107,143,113,0.7)"></div>Desired™</div>
+        </div>
+      </div>
+    </div>
+    <div class="rpt-section">
+      <div class="rpt-section-label">Il tuo Libro — Tutti i Capitoli</div>
+      <div class="rpt-book-index">
+        ${state.reorderOrder.map((id, i) => {
+          const ch = state.chapters.find(c => c.id === id);
+          const data = state.diveData[id] || {};
+          const pres = data.pres ?? 5, des = data.des ?? 8, gap = des - pres, pri = data.priority ?? 5;
+          return `<div class="rpt-book-row">
+            <div class="rpt-book-rank">${i+1}</div>
+            <div class="rpt-book-emoji">${ch?.emoji || '📖'}</div>
+            <div class="rpt-book-name">${ch?.name || id}</div>
+            <div class="rpt-book-scores">
+              <div class="rpt-score-chip pres"><div class="rpt-score-val">${pres}</div><div class="rpt-score-lbl">Oggi</div></div>
+              <div class="rpt-score-chip des"><div class="rpt-score-val">${des}</div><div class="rpt-score-lbl">Desired</div></div>
+              <div class="rpt-score-chip gap"><div class="rpt-score-val">+${gap}</div><div class="rpt-score-lbl">Gap</div></div>
+              <div class="rpt-score-chip"><div class="rpt-score-val" style="color:var(--gold)">${pri}</div><div class="rpt-score-lbl">Priority</div></div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  // ═══ PAGINA 4 — EMOTIONAL PROFILE ═══
+  const p4Html = allEmotions.length > 0 ? `
+  <div class="pdf-page" id="pdf-p4">
+    <div class="pdf-page-header"><div class="pdf-page-brand">Human Mirror™ Report</div><div class="pdf-page-num">Emotional Profile™ · P.4</div></div>
+    <div class="rpt-section">
+      <div class="rpt-section-label">Emotional Profile™</div>
+      <div class="rpt-emo-table">
+        ${state.reorderOrder.filter(id => state.diveData[id]?.emotion).map(id => {
+          const ch = state.chapters.find(c => c.id === id);
+          const emo = state.diveData[id]?.emotion || '';
+          return `<div class="rpt-emo-row">
+            <div class="rpt-emo-emoji">${ch?.emoji || '📖'}</div>
+            <div class="rpt-emo-name">${ch?.name || id}</div>
+            <div class="rpt-emo-arrow">→</div>
+            <div class="rpt-emo-badge" style="${emoBadgeStyle(emo)}">${emo}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="rpt-emo-density" style="margin-top:1rem">
+        <div class="rpt-emo-den-item"><div class="rpt-emo-den-val" style="color:var(--sage)">${emoPos}</div><div class="rpt-emo-den-lbl">Positive</div></div>
+        <div class="rpt-emo-den-item"><div class="rpt-emo-den-val" style="color:var(--gold)">${emoNeu}</div><div class="rpt-emo-den-lbl">Neutral</div></div>
+        <div class="rpt-emo-den-item"><div class="rpt-emo-den-val" style="color:#b03c3c">${emoCrit}</div><div class="rpt-emo-den-lbl">Critiche</div></div>
+      </div>
+    </div>
+    <div class="rpt-section">
+      <div class="rpt-section-label">Identikit Human Mirror™</div>
+      <div class="rpt-identikit"><div class="rpt-identikit-text">${identikitText}</div></div>
+    </div>
+  </div>` : '';
+
+  // ═══ PAGINA 5 — HERO / HIGH POTENTIAL / FIRST DOMINO ═══
+  const p5Html = `
+  <div class="pdf-page" id="pdf-p5">
+    <div class="pdf-page-header"><div class="pdf-page-brand">Human Mirror™ Report</div><div class="pdf-page-num">Hero · High Potential · First Domino · P.5</div></div>
+    ${madreCh ? `
+    <div class="rpt-section">
+      <div class="rpt-section-label">Capitolo Madre™ — Hero Chapter</div>
+      <div class="rpt-madre">
+        <div class="rpt-madre-eyebrow">Capitolo Madre™ · Leva Sistemica</div>
+        <div class="rpt-madre-main"><div class="rpt-madre-emoji">${madreCh.emoji}</div><div class="rpt-madre-name">${madreCh.name}</div></div>
+        <div class="rpt-madre-desc">Questo è il capitolo che sembra influenzare maggiormente gli altri. Migliorarlo attiva una reazione a catena positiva sull'intero sistema.</div>
+      </div>
+    </div>` : ''}
+    ${highPot ? `
+    <div class="rpt-section">
+      <div class="rpt-section-label">Area ad Alto Potenziale Evolutivo™</div>
+      <div class="rpt-pot">
+        <div class="rpt-pot-header">
+          <div class="rpt-pot-emoji">${highPot.ch.emoji}</div>
+          <div class="rpt-pot-title-block">
+            <div class="rpt-pot-ch-name">${highPot.ch.name}</div>
+            <div class="rpt-pot-tag">✦ High Potential Area™</div>
+          </div>
+        </div>
+        <div class="rpt-pot-stats">
+          <div class="rpt-pot-stat"><div class="rpt-pot-stat-val">${highPot.imp}<span style="font-size:0.7rem;font-weight:400">/10</span></div><div class="rpt-pot-stat-lbl">Importanza</div></div>
+          <div class="rpt-pot-stat-div"></div>
+          <div class="rpt-pot-stat"><div class="rpt-pot-stat-val">+${highPot.gap}</div><div class="rpt-pot-stat-lbl">Gap evolutivo</div></div>
+          <div class="rpt-pot-stat-div"></div>
+          <div class="rpt-pot-stat"><div class="rpt-pot-stat-val">${highPot.pri || highPot.data?.priority || '—'}</div><div class="rpt-pot-stat-lbl">Priority</div></div>
+        </div>
+        <div class="rpt-pot-insight">Qui si nasconde spazio evolutivo reale. Piccoli miglioramenti in questo capitolo potrebbero generare benefici significativi anche in altre aree della tua vita.</div>
+      </div>
+    </div>` : ''}
+    ${madreCh ? `
+    <div class="rpt-section">
+      <div class="rpt-section-label">First Domino Candidate™</div>
+      <div class="rpt-domino">
+        <div class="rpt-domino-header">
+          <div class="rpt-domino-emoji">${madreCh.emoji}</div>
+          <div class="rpt-domino-title-block">
+            <div class="rpt-domino-name">${madreCh.name}</div>
+            <div class="rpt-domino-tag">First Domino™</div>
+          </div>
+        </div>
+        <div class="rpt-domino-reason">
+          <div class="rpt-domino-reason-label">Questo capitolo rappresenta il miglior punto di partenza attuale</div>
+          <div class="rpt-domino-reason-text">
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+              <span style="font-size:0.78rem;color:var(--ink2)">• Alta importanza</span>
+              <span style="font-size:0.78rem;color:var(--ink2)">• Alta priorità attuale</span>
+              <span style="font-size:0.78rem;color:var(--ink2)">• Potenziale di miglioramento</span>
+              <span style="font-size:0.78rem;color:var(--ink2)">• Impatto sistemico</span>
+            </div>
+          </div>
+        </div>
+        <div class="rpt-domino-cascades">
+          <div class="rpt-domino-cascades-label">Benefici a cascata su</div>
+          <div class="rpt-domino-cascades-list">
+            ${(REALM_MAP[state.madre || top3[0]?.id] || []).slice(0,5).map(r => `<div class="rpt-domino-cascade-item">→ ${r}</div>`).join('')}
+          </div>
+        </div>
+        ${dominoData.action ? `<div class="rpt-domino-action-block"><div class="rpt-domino-action-label">Prima azione suggerita</div><div class="rpt-domino-action-text">"${dominoData.action}"</div></div>` : ''}
+      </div>
+    </div>` : ''}
+    <div class="rpt-section">
+      <div class="rpt-section-label">Top 3 Capitoli™</div>
+      <div class="rpt-top3-grid">
+        ${top3.map((s, i) => `
+          <div class="rpt-top3-card">
+            <div class="rpt-top3-rank">${i+1}</div>
+            <div class="rpt-top3-emoji">${s.ch.emoji}</div>
+            <div class="rpt-top3-body">
+              <div class="rpt-top3-name">${s.ch.name}</div>
+              <div class="rpt-top3-why">${s.data.why || STRONG_PHRASES[s.id] || 'Un capitolo che emerge con forza dalla tua lettura.'}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  // ═══ PAGINA 6 — ACTION ROADMAP ═══
+  const p6Html = `
+  <div class="pdf-page" id="pdf-p6">
+    <div class="pdf-page-header"><div class="pdf-page-brand">Human Mirror™ Report</div><div class="pdf-page-num">Action Roadmap™ · P.6</div></div>
+    ${actionsWithData.length > 0 ? `
+    <div class="rpt-section">
+      <div class="rpt-section-label">Le Tue Prime Azioni™ — Action Roadmap</div>
+      <div class="rpt-action-roadmap">
+        ${actionsWithData.map(({ch, data}) => `
+          <div class="rpt-action-row">
+            <div class="rpt-action-emoji">${ch.emoji}</div>
+            <div class="rpt-action-name">${ch.name}</div>
+            <div class="rpt-action-arrow">→</div>
+            <div class="rpt-action-text">${data.action}</div>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+    <div class="rpt-section">
+      <div class="rpt-section-label">Roadmap 30 Giorni™</div>
+      <div class="rpt-roadmap">
+        ${weeks.map(w => `
+          <div class="rpt-week">
+            <div class="rpt-week-num"><div class="rpt-week-n">${w.n}</div><div class="rpt-week-title-small">${w.goal}</div></div>
+            <div class="rpt-week-body"><div class="rpt-week-title">${w.title}</div><div class="rpt-week-text">${w.text}</div></div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  // ═══ PAGINA 7 — NEXT 7 DAYS ═══
+  const p7Html = `
+  <div class="pdf-page" id="pdf-p7">
+    <div class="pdf-page-header"><div class="pdf-page-brand">Human Mirror™ Report</div><div class="pdf-page-num">Next 7 Days™ · P.7</div></div>
+    <div class="rpt-section">
+      <div class="rpt-section-label">I Prossimi 7 Giorni™</div>
+      <div class="rpt-7days">
+        ${sevenDayActions.length > 0
+          ? sevenDayActions.map(({ch, data}) => `
+            <div class="rpt-7day-item">
+              <div class="rpt-7day-box"></div>
+              <div class="rpt-7day-text"><strong>${ch.emoji} ${ch.name}</strong> — ${data.action}</div>
+            </div>`).join('')
+          : `<div class="rpt-7day-item"><div class="rpt-7day-box"></div><div class="rpt-7day-text">${dominoData.action || 'Inizia dal tuo primo domino.'}</div></div>`
+        }
+      </div>
+    </div>
+    <div class="rpt-section" style="margin-top:1.5rem">
+      <div class="rpt-section-label">Prima Azione 72h™</div>
+      <div class="rpt-azione">
+        <div class="rpt-azione-label">La tua prima azione</div>
+        <div class="rpt-azione-text">${dominoData.action || 'Dedica un momento di attenzione al tuo capitolo prioritario nelle prossime 72 ore.'}</div>
+        <div class="rpt-azione-sub">Entro 72 ore · Concreta · Possibile</div>
+      </div>
+    </div>
+  </div>`;
+
+  // ═══ PAGINA 8 — MY COMMITMENT ═══
+  const p8Html = `
+  <div class="pdf-page" id="pdf-p8">
+    <div class="pdf-page-header"><div class="pdf-page-brand">Human Mirror™ Report</div><div class="pdf-page-num">Il Mio Impegno™ · P.8</div></div>
+    <div class="rpt-section">
+      <div class="rpt-section-label">Il Mio Impegno™ — My Commitment</div>
+      <div class="rpt-commit">
+        <div class="rpt-commit-intro">Dopo aver osservato il mio libro oggi, scelgo di partire da:</div>
+        ${commitCh ? `
+        <div class="rpt-commit-hero">
+          <div class="rpt-commit-emoji">${commitCh.emoji}</div>
+          <div>
+            <div class="rpt-commit-name">${commitCh.name}</div>
+            <div class="rpt-commit-action">${commitAction}</div>
+          </div>
+        </div>` : ''}
+        <div class="rpt-commit-pledge">Mi impegno a: <em>"${commitAction}"</em></div>
+        <div class="rpt-commit-sign-row">
+          <div class="rpt-commit-sign">
+            <div class="rpt-commit-sign-line"></div>
+            <div class="rpt-commit-sign-label">Firma</div>
+          </div>
+          <div class="rpt-commit-sign">
+            <div class="rpt-commit-sign-line"></div>
+            <div class="rpt-commit-sign-label">Data</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  // ═══ PAGINA FINALE ═══
+  const pFinalHtml = `
+  <div class="pdf-closing-page" id="pdf-final" style="display:flex;background:var(--navy)">
+    <div class="pdf-closing-brand">Human <em>Mirror</em>™</div>
+    <div class="pdf-closing-tagline">Osserva.<br>Comprendi.<br>Evolvi.</div>
+  </div>`;
+
+  // ═══ SCREEN REPORT (non-print view) ═══
+  const screenHtml = `
+    <div class="rpt-section">
+      <div class="rpt-section-label">Il tuo Report — Anteprima</div>
+      <p style="font-size:0.82rem;color:var(--ink3);line-height:1.65;margin-bottom:1rem">Il report completo è disponibile in formato PDF. Clicca "Scarica PDF" o "Stampa" per visualizzare tutte le 8 pagine.</p>
+    </div>
+
+    ${(userBookTitle || suggestedTitle) ? `<div class="rpt-section"><div class="rpt-section-label">Book Title™</div><div class="rpt-bt-row">${userBookTitle ? `<div class="rpt-bt-cell"><div class="rpt-bt-cell-label">Titolo inserito</div><div class="rpt-bt-cell-val">"${userBookTitle}"</div></div>` : ''}<div class="rpt-bt-cell suggested"><div class="rpt-bt-cell-label">Titolo suggerito</div><div class="rpt-bt-cell-val">"${suggestedTitle}"</div></div></div></div>` : ''}
+
+    <div class="rpt-section">
+      <div class="rpt-section-label">Human Mirror Radar™</div>
+      <div class="rpt-radar-wrap">
+        <div class="rpt-radar-title">La tua mappa attuale e la direzione desiderata.</div>
+        <div class="rpt-radar-sub">Overlay Present™ vs Desired Chapter™</div>
+        <canvas id="radarCanvas"></canvas>
+        <div class="rpt-radar-legend">
+          <div class="rpt-legend-item"><div class="rpt-legend-dot" style="background:rgba(12,22,32,0.7)"></div>Present™</div>
+          <div class="rpt-legend-item"><div class="rpt-legend-dot" style="background:rgba(107,143,113,0.7)"></div>Desired™</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rpt-section"><div class="rpt-section-label">La Storia che Emerge</div><div class="rpt-narrative"><div class="rpt-narrative-text">${narrativeText}</div></div></div>
+
+    <div class="rpt-section"><div class="rpt-section-label">Identikit Human Mirror™</div><div class="rpt-identikit"><div class="rpt-identikit-text">${identikitText}</div></div></div>
+
+    <div class="rpt-section"><div class="rpt-section-label">Pattern Dominante™</div><div class="rpt-pattern"><div class="rpt-pattern-name">◉ ${pattern.name}</div><div class="rpt-pattern-why">${patternDesc}</div></div></div>
+
+    <div class="rpt-section"><div class="rpt-section-label">Top 3 Capitoli™</div><div class="rpt-top3-grid">${top3.map((s,i)=>`<div class="rpt-top3-card"><div class="rpt-top3-rank">${i+1}</div><div class="rpt-top3-emoji">${s.ch.emoji}</div><div class="rpt-top3-body"><div class="rpt-top3-name">${s.ch.name}</div><div class="rpt-top3-why">${s.data.why||STRONG_PHRASES[s.id]||'Un capitolo che emerge con forza.'}</div></div></div>`).join('')}</div></div>
+
+    ${madreCh ? `<div class="rpt-section"><div class="rpt-section-label">Capitolo Madre™</div><div class="rpt-madre"><div class="rpt-madre-eyebrow">Capitolo Madre™ · Leva Sistemica</div><div class="rpt-madre-main"><div class="rpt-madre-emoji">${madreCh.emoji}</div><div class="rpt-madre-name">${madreCh.name}</div></div><div class="rpt-madre-desc">Questo è il capitolo che sembra influenzare maggiormente gli altri. Migliorarlo attiva una reazione a catena positiva sull'intero sistema.</div></div></div>` : ''}
+
+    ${highPot ? `<div class="rpt-section"><div class="rpt-section-label">Area ad Alto Potenziale Evolutivo™</div><div class="rpt-pot"><div class="rpt-pot-header"><div class="rpt-pot-emoji">${highPot.ch.emoji}</div><div class="rpt-pot-title-block"><div class="rpt-pot-ch-name">${highPot.ch.name}</div><div class="rpt-pot-tag">✦ High Potential Area™</div></div></div><div class="rpt-pot-stats"><div class="rpt-pot-stat"><div class="rpt-pot-stat-val">${highPot.imp}<span style="font-size:0.7rem;font-weight:400">/10</span></div><div class="rpt-pot-stat-lbl">Importanza</div></div><div class="rpt-pot-stat-div"></div><div class="rpt-pot-stat"><div class="rpt-pot-stat-val">+${highPot.gap}</div><div class="rpt-pot-stat-lbl">Gap</div></div><div class="rpt-pot-stat-div"></div><div class="rpt-pot-stat"><div class="rpt-pot-stat-val">${highPot.pri||highPot.data?.priority||'—'}</div><div class="rpt-pot-stat-lbl">Priority</div></div></div><div class="rpt-pot-insight">Qui si nasconde spazio evolutivo reale. Piccoli miglioramenti qui potrebbero generare benefici significativi anche in altre aree della tua vita.</div></div></div>` : ''}
+
+    ${madreCh ? `<div class="rpt-section"><div class="rpt-section-label">First Domino Candidate™</div><div class="rpt-domino"><div class="rpt-domino-header"><div class="rpt-domino-emoji">${madreCh.emoji}</div><div class="rpt-domino-title-block"><div class="rpt-domino-name">${madreCh.name}</div><div class="rpt-domino-tag">First Domino™</div></div></div><div class="rpt-domino-reason"><div class="rpt-domino-reason-label">Perché questo punto di partenza</div><div class="rpt-domino-reason-text">Questo capitolo mostra il miglior equilibrio tra importanza personale, priorità attuale e potenziale di miglioramento.</div></div><div class="rpt-domino-cascades"><div class="rpt-domino-cascades-label">Benefici a cascata su</div><div class="rpt-domino-cascades-list">${(REALM_MAP[state.madre||top3[0]?.id]||[]).slice(0,4).map(r=>`<div class="rpt-domino-cascade-item">→ ${r}</div>`).join('')}</div></div>${dominoData.action?`<div class="rpt-domino-action-block"><div class="rpt-domino-action-label">Prima azione suggerita</div><div class="rpt-domino-action-text">"${dominoData.action}"</div></div>`:''}</div></div>` : ''}
+
+    ${actionsWithData.length > 0 ? `<div class="rpt-section"><div class="rpt-section-label">Action Roadmap™ — Le Tue Prime Azioni</div><div class="rpt-action-roadmap">${actionsWithData.map(({ch,data})=>`<div class="rpt-action-row"><div class="rpt-action-emoji">${ch.emoji}</div><div class="rpt-action-name">${ch.name}</div><div class="rpt-action-arrow">→</div><div class="rpt-action-text">${data.action}</div></div>`).join('')}</div></div>` : ''}
+
+    ${sevenDayActions.length > 0 ? `<div class="rpt-section"><div class="rpt-section-label">I Prossimi 7 Giorni™</div><div class="rpt-7days">${sevenDayActions.map(({ch,data})=>`<div class="rpt-7day-item"><div class="rpt-7day-box"></div><div class="rpt-7day-text"><strong>${ch.emoji} ${ch.name}</strong> — ${data.action}</div></div>`).join('')}</div></div>` : ''}
+
+    <div class="rpt-section"><div class="rpt-section-label">Roadmap 30 Giorni™</div><div class="rpt-roadmap">${weeks.map(w=>`<div class="rpt-week"><div class="rpt-week-num"><div class="rpt-week-n">${w.n}</div><div class="rpt-week-title-small">${w.goal}</div></div><div class="rpt-week-body"><div class="rpt-week-title">${w.title}</div><div class="rpt-week-text">${w.text}</div></div></div>`).join('')}</div></div>
+
+    <div class="rpt-section"><div class="rpt-section-label">Evolution Direction™</div><div class="rpt-evdir"><div class="rpt-evdir-label">Evolution Direction™</div><div class="rpt-evdir-text">${evDirection}</div></div></div>
+
+    ${commitCh ? `<div class="rpt-section"><div class="rpt-section-label">Il Mio Impegno™</div><div class="rpt-commit"><div class="rpt-commit-intro">Dopo aver osservato il mio libro oggi, scelgo di partire da:</div><div class="rpt-commit-hero"><div class="rpt-commit-emoji">${commitCh.emoji}</div><div><div class="rpt-commit-name">${commitCh.name}</div><div class="rpt-commit-action">${commitAction}</div></div></div><div class="rpt-commit-pledge">Mi impegno a: <em>"${commitAction}"</em></div><div class="rpt-commit-sign-row"><div class="rpt-commit-sign"><div class="rpt-commit-sign-line"></div><div class="rpt-commit-sign-label">Firma</div></div><div class="rpt-commit-sign"><div class="rpt-commit-sign-line"></div><div class="rpt-commit-sign-label">Data</div></div></div></div></div>` : ''}
+
+    <div class="rpt-closing">
+      <div class="rpt-closing-quote">"Non serve cambiare tutto.<br>Serve iniziare dal <em>punto giusto</em>."</div>
+      <button class="rpt-restart" onclick="confirmRestart()">Ricomincia da capo</button>
+    </div>
+  `;
+
+  // ── Inject into DOM ──
+  document.getElementById('report-root').innerHTML = `
+    <div class="rpt-topbar">
+      <div class="rpt-title-block">
+        <div class="rpt-eyebrow">Human Mirror™</div>
+        <h2>${nameStr ? `Il Libro di ${nameStr}™` : 'Il tuo Report™'}</h2>
+      </div>
+      <div class="rpt-actions">
+        <button class="rpt-btn" onclick="window.print()">🖨️ Stampa / PDF</button>
+        <button class="rpt-btn primary" onclick="exportReport()">📄 Scarica PDF</button>
+      </div>
+    </div>
+    <!-- PDF-only pages (hidden in browser, visible in print) -->
+    ${coverHtml}${p2Html}${p3Html}${p4Html}${p5Html}${p6Html}${p7Html}${p8Html}${pFinalHtml}
+    <!-- Screen view -->
+    <div class="rpt-body" id="rpt-screen-body">${screenHtml}</div>
+  `;
+
+  requestAnimationFrame(() => {
+    drawRadar('radarCanvas', radarLabels, radarPresent, radarDesired);
+    // Retry in case canvas parent wasn't fully laid out
+    setTimeout(() => drawRadar('radarCanvas', radarLabels, radarPresent, radarDesired), 200);
+  });
+}
+
+function exportReport() {
+  showFlash('Usa il tasto Stampa → "Salva come PDF" nel dialogo del browser');
+  setTimeout(() => window.print(), 600);
+}
+
+function confirmRestart() {
+  if (confirm('Sei sicuro di voler ricominciare? I tuoi dati saranno persi.')) {
+    startFresh();
+    goToScreen('welcome');
+    screenHistory = ['welcome'];
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// BOOK TITLE ENGINE
+// ═══════════════════════════════════════════════════════
+const BOOK_TITLE_SUGGESTIONS = ['Ricostruzione','Accelerazione','Nuovo Inizio','Rinascita','Alla Ricerca di Equilibrio','Costruire le Fondamenta','Tempo di Cambiamento','Evoluzione','Ripartenza','Consolidamento','Espansione','Nuova Direzione'];
+
+function initBookTitle() {
+  const input = document.getElementById('bt-input');
+  const chips = document.getElementById('bt-chips');
+  const nameInput = document.getElementById('user-name-input');
+  if (!chips) return;
+  chips.innerHTML = BOOK_TITLE_SUGGESTIONS.map(s =>
+    `<div class="bt-chip" onclick="selectBookTitle(this,'${s}')">${s}</div>`
+  ).join('');
+  if (nameInput) {
+    nameInput.value = state.userName || '';
+    nameInput.addEventListener('input', () => {
+      state.userName = nameInput.value.trim();
+      updateBookTitleQuestion();
+      save();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', () => {
+      state.bookTitle = input.value;
+      document.getElementById('bt-count').textContent = `${input.value.length}/80`;
+      document.querySelectorAll('.bt-chip').forEach(c => c.classList.remove('sel'));
+      save();
+    });
+    if (state.bookTitle) {
+      input.value = state.bookTitle;
+      document.getElementById('bt-count').textContent = `${state.bookTitle.length}/80`;
+      document.querySelectorAll('.bt-chip').forEach(c => {
+        if (c.textContent === state.bookTitle) c.classList.add('sel');
+      });
+    }
+  }
+  updateBookTitleQuestion();
+}
+
+function selectBookTitle(chip, title) {
+  document.querySelectorAll('.bt-chip').forEach(c => c.classList.remove('sel'));
+  chip.classList.add('sel');
+  state.bookTitle = title;
+  const input = document.getElementById('bt-input');
+  if (input) { input.value = title; document.getElementById('bt-count').textContent = `${title.length}/80`; }
+  save();
+}
+
+function suggestBookTitle(scored, emotions) {
+  // Count emotion categories
+  const CRIT = ['Frustrazione','Confusione','Ansia','Rabbia','Paura','Stanchezza','Sovraccarico'];
+  const NEU  = ['Curiosità','Attesa','Esplorazione','Cambiamento'];
+  let critCount = 0, posCount = 0, neuCount = 0;
+  emotions.forEach(e => {
+    if (CRIT.includes(e)) critCount++;
+    else if (NEU.includes(e)) neuCount++;
+    else posCount++;
+  });
+  const avgGap = scored.length ? scored.reduce((s,x) => s + x.gap, 0) / scored.length : 3;
+  const topIds = scored.slice(0,3).map(s => s.id);
+  // heuristics
+  if (critCount >= 3 || avgGap >= 5) return critCount > posCount ? 'Ricostruzione' : 'Alla Ricerca di Equilibrio';
+  if (topIds.some(id => ['crescita','significato','spirit'].includes(id))) return 'Evoluzione';
+  if (topIds.some(id => ['lavoro','finanze','performance'].includes(id))) return 'Accelerazione';
+  if (topIds.some(id => ['relazioni','emozioni','tempo'].includes(id))) return 'Rinascita';
+  if (neuCount >= 3) return 'Esplorazione';
+  if (posCount >= 3 && avgGap <= 3) return 'Consolidamento';
+  return 'Nuovo Inizio';
+}
+
+// ═══════════════════════════════════════════════════════
+// NARRATIVE ENGINE
+// ═══════════════════════════════════════════════════════
+const CRIT_EMOS = new Set(['Frustrazione','Confusione','Ansia','Rabbia','Paura','Stanchezza','Sovraccarico']);
+const NEU_EMOS  = new Set(['Curiosità','Attesa','Esplorazione','Cambiamento']);
+
+function generateNarrative(scored, madreCh, pattern, bookTitle) {
+  const top2 = scored.slice(0,2).map(s => s.ch.name);
+  const critChapters = scored.filter(s => CRIT_EMOS.has(s.data.emotion || '')).map(s => s.ch.name);
+  const posChapters  = scored.filter(s => s.data.emotion && !CRIT_EMOS.has(s.data.emotion) && !NEU_EMOS.has(s.data.emotion)).map(s => s.ch.name);
+  const whys = scored.slice(0,3).map(s => s.data.why).filter(Boolean);
+  const avgGap = scored.length ? (scored.reduce((sum,s) => sum+s.gap,0)/scored.length).toFixed(1) : 3;
+  const bookPhrase = bookTitle ? `Il titolo "${bookTitle}" cattura qualcosa di essenziale di questo momento. ` : '';
+
+  let phaseDesc = '';
+  if (parseFloat(avgGap) >= 5) phaseDesc = 'una fase di riallineamento profondo';
+  else if (parseFloat(avgGap) >= 3) phaseDesc = 'un periodo di transizione attiva';
+  else phaseDesc = 'un momento di consolidamento e crescita';
+
+  const critPhrase = critChapters.length
+    ? ` Capitoli come ${critChapters.slice(0,2).join(' e ')} riflettono una tensione che merita attenzione — non come problema, ma come segnale.`
+    : '';
+  const posPhrase = posChapters.length
+    ? ` In ${posChapters.slice(0,2).join(' e ')} emerge già forza e presenza — risorse reali su cui fare leva.`
+    : '';
+  const whyPhrase = whys.length
+    ? ` Dietro i capitoli prioritari emerge un filo comune: "${whys[0]}".`
+    : '';
+  const madrePh = madreCh ? ` Il capitolo ${madreCh.name} sembra essere la leva sistemica — il punto da cui partire per generare il maggiore impatto sul sistema nel suo insieme.` : '';
+
+  return `${bookPhrase}Dal tuo Libro emerge ${phaseDesc}. I capitoli ${top2.join(' e ')} richiedono la maggiore attenzione, con un gap evolutivo medio di ${avgGap} punti.${critPhrase}${posPhrase}${whyPhrase}${madrePh} Il pattern dominante — ${pattern.name} — suggerisce una direzione precisa: non cambiare tutto, ma agire dal punto giusto.`;
+}
+
+function generateEvolutionDirection(scored, pattern, madreCh) {
+  const dominoName = madreCh ? madreCh.name.toLowerCase() : 'il capitolo prioritario';
+  const descMap = {
+    'Recovery-Seeking':      `recupero di energia, qualità del riposo e rigenerazione delle risorse vitali`,
+    'Purpose-Driven':        `ricerca di significato profondo e costruzione di una direzione che rispecchi i valori più autentici`,
+    'Growth-Oriented':       `crescita consapevole, espansione delle capacità e integrazione di nuove prospettive`,
+    'Performance-Oriented':  `ottimizzazione della performance, gestione dell'energia e focalizzazione sulle priorità che contano`,
+    'Balance-Seeking':       `recupero di equilibrio tra le aree della vita, con più spazio per ciò che ha valore`,
+    'Relationship-Centered': `investimento nelle connessioni significative e nella qualità delle relazioni`,
+    'Creative-Expansion':    `espressione creativa, esplorazione di nuove possibilità e rinnovo dell'energia interiore`,
+    'Stability-Seeking':     `costruzione di fondamenta solide, riduzione dell'incertezza e creazione di struttura`,
+  };
+  const dir = descMap[pattern.name] || 'riallineamento tra ciò che conta e ciò che vivi ogni giorno';
+  return `La direzione che emerge dalla tua mappa sembra orientata verso il ${dir}. ${madreCh ? `Partendo da ${dominoName}, il sistema suggerisce che un cambiamento mirato in questa area può generare un effetto positivo a cascata su tutto il resto.` : 'La chiave è iniziare dal punto con il maggiore potenziale di leva sistemica.'}`;
+}
+
+// ═══════════════════════════════════════════════════════
+// FLASH MESSAGE
+// ═══════════════════════════════════════════════════════
+function showFlash(msg) {
+  const div = document.createElement('div');
+  div.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;padding:10px 20px;border-radius:100px;font-size:0.8rem;z-index:500;animation:fadeSlide 0.3s var(--ease);font-family:var(--sans)';
+  div.textContent = msg;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 2200);
+}
+</script>
+</body>
+</html>
